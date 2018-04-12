@@ -1,0 +1,48 @@
+#Things I'm learning about Node.js and other parts of this stack.
+
+*[Blog]
+***Exceptions in the synchronous code in a callback will cut the main thread. This means services need to try catch
+their api calls and explicitly reject them to prevent untested input scenarios from cutting the main thread. Most
+other test cases can be simulated by running through the code but an error such as data[5] on a 5 point response-data
+might not occur till you send an input that results in that 5 point response.
+
+Promises - Catch Block
+Catch handler on a promise is just a shortcut way of handling just the rejection portion of a promise. Every then returns a promise
+and a catch block will catch the errors from explicit rejections but also unhandled exceptions that can occur in the
+joining or preceding then call.
+
+The anti-pattern that I observe is using the rejection for control flow. If something fails within the business domain
+you most likely should not be rejecting the promise. Handle the error as you normally would. Going forward I only reject
+a promise when an error was returned and I want to make that available to the calling function. I could just as easily
+only use a catch block
+
+Proper Principal Policy
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::298959928212:user/usman_mutawakil"
+      },
+      "Action": "es:*",
+      "Resource": "arn:aws:es:us-east-1:298959928212:domain/discussionfairy-prod/*"
+    }
+  ]
+
+
+"Content-Disposition", "inline; allows files to open in the browser
+
+[Automated ElasticSearch Backups]
+
+Configure an IP rule so you can curl your cluster and run the following command to find repos on board
+curl -XGET 'https://search-discussionfairy-prod-wxouwxl3atrqemx2c7w2lrrwga.us-east-1.es.amazonaws.com/_snapshot/?pretty'
+
+-The repo for automated backups is cs-automated. To see the list of backups in cs-automated run
+-curl -XGET 'https://search-discussionfairy-prod-wxouwxl3atrqemx2c7w2lrrwga.us-east-1.es.amazonaws.com/_snapshot/cs-automated/_all?pretty
+
+[Trending]
+-Trending is simply setting a cuttoff for 24 hours or the last hour, or something configurable then ordering by popularity.
+Trending in the last hour is the most popular story in the last hour. You could say more specifically its the story thats
+catching steam or is accelerating the fastest relative to some other time frame but I think Neo4j would be best for
+queries like that and realistically it would offer little value to me if any at all.

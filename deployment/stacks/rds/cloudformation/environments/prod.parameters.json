@@ -1,0 +1,26 @@
+[
+  {
+    "ParameterKey": "MasterUsername",
+    "ParameterValue": "xxxxxxxxxx"
+  },
+  {
+    "ParameterKey": "MasterUserPassword",
+    "ParameterValue": "xxxxxxxxxxxxxxxxxx"
+  },
+  {
+    "ParameterKey":"InstanceType",
+    "ParameterValue":"db.t2.medium"
+  },
+  {
+    "ParameterKey":"Storage",
+    "ParameterValue":"5"
+  },
+  {
+    "ParameterKey":"Engine",
+    "ParameterValue":"MySQL"
+  },
+  {
+    "ParameterKey":"EngineVersion",
+    "ParameterValue":"5.7"
+  }
+]

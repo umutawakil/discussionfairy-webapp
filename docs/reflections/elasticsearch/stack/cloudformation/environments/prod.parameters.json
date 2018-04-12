@@ -1,0 +1,30 @@
+[
+  {
+    "ParameterKey": "Domain",
+    "ParameterValue": "discussionfairy-prod"
+  },
+  {
+    "ParameterKey": "InstanceType",
+    "ParameterValue": "t2.small.elasticsearch"
+  },
+  {
+    "ParameterKey": "IsDedicatedMasterEnabled",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "NumberOfInstances",
+    "ParameterValue": "1"
+  },
+  {
+    "ParameterKey": "EBSVolumeSize",
+    "ParameterValue": "10"
+  },
+  {
+    "ParameterKey":"JVMAllowedUtilization",
+    "ParameterValue": "60"
+  },
+  {
+    "ParameterKey":"CPUAllowedUtilization",
+    "ParameterValue": "60"
+  }
+]

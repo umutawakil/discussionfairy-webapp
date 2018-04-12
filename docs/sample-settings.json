@@ -1,0 +1,27 @@
+{
+  "url":"https://localhost:3000",
+  "accessKey":"",
+  "secretKey":"",
+  "keyNumber":"1",
+  "recordingSourceBucket":"discussionfairy-prod-recordings",
+  "recordingSourceURL": "https://discussionfairy-prod-recordings.s3.amazonaws.com",
+  "recordingUploadURL": "http://discussionfairy-prod-recordings.s3.amazonaws.com",
+  "xmzAlgorithm":"AWS4-HMAC-SHA256",
+  "maxImageSize":"10485760",
+
+  "JWTAlgorithm": "HS256",
+
+  "maxDiscussionIdLength": 20,
+  "maxKeywordLength": 30,
+  "maxTitleLength": 100,
+  "maxLocationLength": 50,
+  "maxLanguageLength": 30,
+  "recordingTimeSeconds": 60,
+  "maxExtensionLength" : 4,
+
+  "elasticSearchEndpoint": "https://search-discussionfairy-prod-wxouwxl3atrqemx2c7w2lrrwga.us-east-1.es.amazonaws.com",
+  "elasticSearchIndex": "discussionfairy",
+  "maxSearchResultsPerPage": "100",
+
+  "cdn": "https://d3v9oscd7klc5m.cloudfront.net"
+}

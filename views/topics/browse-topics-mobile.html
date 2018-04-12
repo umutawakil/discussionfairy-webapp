@@ -1,0 +1,82 @@
+{% extends "layouts/mobile-layout.html" %}
+
+{% block title %}
+    <title>Share your opinion using audio recordings.</title>
+{% endblock %}
+
+{% block body %}
+    <span id="browse-topics" style="display: none;"></span>
+    <div id="content" >
+        <H1>Topics</H1>
+        <p> Search for topics most relevant to your location.</p>
+        <BR/>
+
+        <!--Filter options -->
+        <!--<div id="topicsFormFilterContainer">
+            <div class="topicsFormElement">
+              <select id="locationMenu" name="location" class="form-control">
+                {% if not results.location %}
+                  <option value='blank'>Audience Location</option>
+                {% endif %}
+                {% for l in results.locations %}
+                    <option value='{{l}}' {{"selected" if l == results.location else ""}}>{{l}}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="topicsFormElement">
+              <select id="languageMenu" name="language" class="form-control">
+                {% if not results.language %}
+                  <option value='blank'>Audience Language</option>
+                {% endif %}
+                {% for l in results.languages %}
+                  <option value='{{l}}' {{"selected" if l == results.language else ""}}>{{l}}</option>
+                {% endfor %}
+              </select>
+            </div>
+        </div>-->
+
+        <hr/>
+
+        {% if (results.length) %}
+        <!-- Page/Menu Tabs-->
+        <div id="topicsListContainer">
+            <div id="results" class="topicsTab">
+              <!--<div class="">-->
+                {% for k in results %}
+                  {% include "../topics/partials/topic-list.html" %}
+                {% endfor %}
+              <!--</div>-->
+            </div>
+        </div>
+        {% endif %}
+        {% if results.length === 0 and (not results.pages.nextPage)  %}
+        <div class="page-header">
+          <h1>No results</h1>
+        </div>
+          <p>No topics exist for that filter criteria.</p>
+          <p>Try another language and location combination.</p>
+        {% endif %}
+        {% if results.length === 0 and results.pages.currentPage !== 0 %}
+        <div class="page-header">
+          <h1>No results</h1>
+        </div>
+          <p>No more search results</p>
+        {% endif %}
+
+        <!--Page Number Buttons-->
+        <!-- btn btn-primary btn-lg active pageButtons-->
+        <div class="pageNumberContainer">
+            {% if results.pages.hasOwnProperty('previousPage') %}
+            <a class="btn btn-primary btn-lg active topicPageButtons" href="/d/topics?p={{results.pages.previousPage}}" role="button">Back</a>
+            {% endif %}
+
+            {% if results.pages.hasOwnProperty('nextPage') and results.pages.nextPage !== 0 %}
+            <a class="btn btn-primary btn-lg active topicPageButtons" href="/d/topics?p={{results.pages.nextPage}}" role="button">Next</a>
+            {% endif %}
+        </div>
+
+
+
+    </div>
+{% endblock %}

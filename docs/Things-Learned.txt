@@ -1,0 +1,26 @@
+SSL Setup
+
+So On node to create an SSL connection all I have to do is generate a private and public pem file and tell the server where it
+is.
+
+openssl req -newkey rsa:2048 -new -nodes -keyout private-ssl-key.pem -out csr.pem
+openssl x509 -req -days 365 -in csr.pem -signkey private-ssl-key.pem -out public-ssl-cert.crt
+
+I've saved the private key in version control because in production we terminate SSL at the ELB.
+
+
+
+Testing
+
+Testing JS error cases has definitely had its uses uncovering try catch blocks that had errors themselves inside the
+catch blocks but its a lot of work. It requires a lot of discipline to ensure each case of underlaying services
+is tested. Typescript might be needed.
+
+[Upload APNS Credentials to AWS SNS]
+-openssl pkcs12 -in apns-production-push-private-key.p12 -out private-key.pem -nocerts -nodes
+-openssl x509 -in apns-production-push.cer -inform DER -out cert.pem
+
+(
+  You might need to select in the keychain both the cert and private key to export both as one item. This will let you pull out the private key and cert as .pem files.
+  Then you can try using the joint .p12 file but I have a feeling a p.12 with the private key is sufficient. Not sure why aws wants 3 components.
+)

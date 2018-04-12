@@ -1,0 +1,42 @@
+
+-Abitrary errors on the callback of a request or response can split the main thread.
+Only safeguard against this is to put your callbacks in a try catch block. This means although there is a route
+utility each service method must take responsibility for handling async errors. Could add this to the list
+of test criteria for each service method and route.
+
+Is all this worth it in terms of testability? Have to make the utility service return values just so it can be tested.
+
+-The individual elements of the discussion list on mobile need to be tested for long values (such as really long reference links)
+
+-More tests for the validation logic for browseService, possibly a utility class with the various potential inputs
+and error cases. This gets me thinking we could test the logic inside the routes independently of the routes reducing
+the need to hit the actual service. Might be a place to add functional P to algorithmic code
+
+-CloudFront distribution (CDN) in CloudFormation for the audio bucket: Separate stack
+-Separate stack for AWS user or build them into the application stack and feed them as parameters into the others.
+-Set algorithm type explicitly for the JWT
+-Integration tests for all new web  endpoints and also invoke their error states.
+-Read more of Joyent node.js error handling.
+
+DynamoDB AutoScaling
+How exactly is this suppose to be configured properly for CloudFormation
+
+-Mobile Detection
+
+Logging
+A way to integrate logging and error handling into the normal flow is needed.
+I will assume this is a middle ware issue.
+
+IP Blacklisting
+Does API gateway offer solutions for doing this? Would it be more meaningful for us to analyze cloud
+trail for IP info?
+
+Exit vs back
+Since the mobile sequence goes pretty deep should their be an exit button in the event uploads are not working?
+
+-MaxCDN
+Max cdn is not caching our boostrap/css, etc. Its not returning 304s. This could be to get me to pay them for faster
+load times. If it comes to that then CloudFront still seems cheaper.
+
+-Submit not just to Android but to the Amazon app store since its just Android devices. That will allow fireTv and kindles
+which expands the possibilities for those that don't have one device or another.

@@ -1,0 +1,19 @@
+{% if not isMobile %}
+  {% extends "layouts/main.html" %}
+{% endif %}
+
+{% if isMobile %}
+  {% extends "layouts/mobile-layout.html" %}
+{% endif %}
+
+{% block title %}
+    <title>Discussion Not Found</title>
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+      <H1>Discussion Not Found</H1><BR/>
+      <p>Check the spelling on the discussion ID you entered ({{path}}).</p><BR/>
+    </div>
+{% endblock %}

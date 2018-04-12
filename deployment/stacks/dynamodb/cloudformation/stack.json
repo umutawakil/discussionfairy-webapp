@@ -1,0 +1,185 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Template for dynamodb stack and iam role for access to it",
+  "Parameters": {},
+  "Resources": {
+    "DiscussionTable": {
+			"Type": "AWS::DynamoDB::Table",
+			"Properties": {
+        "AttributeDefinitions" : [
+            {
+              "AttributeName" : "discussionId",
+              "AttributeType" : "S"
+            }
+          ],
+				"KeySchema": [{
+						"AttributeName": "discussionId",
+						"KeyType": "HASH"
+					}
+				],
+				"ProvisionedThroughput": {
+					"ReadCapacityUnits": "5",
+					"WriteCapacityUnits": "5"
+				},
+				"TableName": "discussion"
+			}
+		},
+    "ReplyTable": {
+			"Type": "AWS::DynamoDB::Table",
+			"Properties": {
+        "AttributeDefinitions" : [
+            {
+              "AttributeName" : "discussionId",
+              "AttributeType" : "S"
+            },
+            {
+              "AttributeName" : "timestamp",
+              "AttributeType" : "N"
+            }
+          ],
+				"KeySchema": [{
+						"AttributeName": "discussionId",
+						"KeyType": "HASH"
+					},{
+            "AttributeName": "timestamp",
+            "KeyType": "RANGE"
+          }
+				],
+				"ProvisionedThroughput": {
+					"ReadCapacityUnits": "5",
+					"WriteCapacityUnits": "5"
+				},
+				"TableName": "reply"
+			}
+		},
+    "SNSRegistrationsTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions" : [
+            {
+              "AttributeName" : "userId",
+              "AttributeType" : "S"
+            }
+          ],
+        "KeySchema": [{
+            "AttributeName": "userId",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": "5",
+          "WriteCapacityUnits": "5"
+        },
+        "TableName": "sns_registrations"
+      }
+    },
+    "SNSSubscriptionsTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions" : [
+            {
+              "AttributeName" : "userId",
+              "AttributeType" : "S"
+            },
+            {
+              "AttributeName" : "topicARN",
+              "AttributeType" : "S"
+            }
+          ],
+        "KeySchema": [{
+            "AttributeName": "userId",
+            "KeyType": "HASH"
+          },{
+            "AttributeName": "topicARN",
+            "KeyType": "RANGE"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": "5",
+          "WriteCapacityUnits": "5"
+        },
+        "TableName": "sns_subscriptions"
+      }
+    },
+    "SNSTopicsTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions" : [
+            {
+              "AttributeName" : "discussionId",
+              "AttributeType" : "S"
+            }
+          ],
+        "KeySchema": [{
+            "AttributeName": "discussionId",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": "5",
+          "WriteCapacityUnits": "5"
+        },
+        "TableName": "sns_topics"
+      }
+    },
+    "UserTable": {
+			"Type": "AWS::DynamoDB::Table",
+			"Properties": {
+        "AttributeDefinitions" : [
+            {
+              "AttributeName" : "userId",
+              "AttributeType" : "S"
+            }
+          ],
+				"KeySchema": [{
+						"AttributeName": "userId",
+						"KeyType": "HASH"
+					}
+				],
+				"ProvisionedThroughput": {
+					"ReadCapacityUnits": "5",
+					"WriteCapacityUnits": "5"
+				},
+				"TableName": "user"
+			}
+		},
+    "KeyValueTable": {
+			"Type": "AWS::DynamoDB::Table",
+			"Properties": {
+        "AttributeDefinitions" : [
+            {
+              "AttributeName" : "objectName",
+              "AttributeType" : "S"
+            }
+          ],
+				"KeySchema": [{
+						"AttributeName": "objectName",
+						"KeyType": "HASH"
+					}
+				],
+				"ProvisionedThroughput": {
+					"ReadCapacityUnits": "5",
+					"WriteCapacityUnits": "5"
+				},
+				"TableName": "keyValueStore"
+			}
+		},
+    "LambdaIAMPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "LambdaAccessDynamoDBPolicy",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["dynamodb:*"],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ]
+        },
+        "Roles": ["lambda-execution-role"]
+      }
+    }
+  },
+  "Outputs" : {}
+}

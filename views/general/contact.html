@@ -1,0 +1,19 @@
+{% if not isMobile %}
+  {% extends "layouts/main.html" %}
+{% endif %}
+
+{% if isMobile %}
+  {% extends "layouts/mobile-layout.html" %}
+{% endif %}
+
+{% block title %}
+    <title>Contact</title>
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+      <H1>Contact</H1><BR/>
+      <p>For any questions you can send an email to questions@DiscussionFairy.com or message on twitter <a href="https://twitter.com/discussionfairy">@DiscussionFairy</a></p><BR/>
+    </div>
+{% endblock %}

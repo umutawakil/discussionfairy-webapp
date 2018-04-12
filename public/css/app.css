@@ -1,0 +1,247 @@
+/*Seems the filter handling this folder is smart enough to detect changes*/
+
+* {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+html {
+  /*min-height: 100%;
+  position:relative;*/
+  height: 100%;
+}
+body {
+  font-family: 'Montserrat','Open Sans', sans-serif;
+  margin-bottom: 50px;
+  min-height: 100%;
+  position: relative;
+  /*STICKY FOOTER!!!!!*/
+  padding-bottom: 50px;
+}
+.keyFont {
+  font-family: 'Montserrat','Open Sans', sans-serif;
+}
+
+.pageTitle {
+  margin-bottom: 30px;
+}
+
+#contentLogo {
+  margin-top: 10px;
+  width: 40px;
+  height: 30px;
+}
+#contentLogoDiv {
+  padding-right: 40px;
+
+}
+.footer {
+  height: 50px;
+  /*font-size: 12px;*/
+  font-weight: 600;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+.footer div {
+  height: 50px;
+}
+
+.footer a {
+  color: #003569;
+}
+/**Registration/Join/Signup-------------*/
+.noShow {
+  display: none;
+}
+.standardModal {
+  top: 5%;
+  right: 50%;
+  outline: none;
+}
+#header {
+  height: 50px;
+  background-color: white;
+  /*margin-top: 30px;*/
+}
+.primaryNavContainer {
+  overflow:hidden
+}
+.headerElement {
+  float: left;
+  margin-top: 5px;
+}
+.headerDivider {
+  margin-right: 20px;
+}
+#sloganContainer {
+  text-align: center;
+  width: 600px;
+  border: 1px solid red;
+}
+.headerText {
+  line-height: 50px;
+}
+.headerText a:link,
+.headerText a:visited,
+.headerText a:hover,
+.headerText a:active {
+  text-decoration: none;
+}
+.headerText a {
+  color: #400080;
+  font-weight: 600;
+}
+
+/* HOME---------------------------------- */
+.pageButtons {
+  background-color: rgb(64,0,128) !important;
+}
+.pageButtonUnit {
+  display: inline-block;
+}
+.bold {
+  font-weight: 600;
+  font-family: "Arial Black", Arial, sans-serif;
+}
+/*#homePageFilterOptions {
+  border: 1px solid rgb(64,0,128);
+  box-shadow: 10px 10px 5px #888888;
+  padding: 20px;
+  margin-bottom: 40px;
+  width: 250px;
+}*/
+#browseContainer {
+  min-width: 600px;
+}
+.filterMenu {
+  width: 150px;
+  margin-bottom: 25px;
+}
+#updateButton {
+  background-color: rgb(64,0,128) !important;
+}
+
+.tab-content {
+  margin-top: 40px;
+}
+.discussionsList {
+  margin-bottom: 50px;
+}
+.discussionsListElement {
+  margin-bottom: 50px;
+}
+.title {
+  font-size: x-large;
+}
+.discussionTitle {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+/*.discussionsListElement a:link,
+.discussionsListElement a:visited,
+.discussionsListElement a:hover,
+.discussionsListElement a:active {
+  color: #400080;
+}*/
+.discussionAudioControl {
+  margin-top: 20px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  /*box-shadow: 10px 10px 5px #888888;*/
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.unimportantMessage {
+  font-size: small;
+  color: #888;
+}
+
+.pageNumberContainer {
+  /*overflow: hidden;*/
+  margin-bottom: 50px;
+  margin-top: 50px;
+}
+/*.pageNumberControlItem {
+  float: left;
+  margin-right: 30px;
+}*/
+
+/*----Desktop Homepage Browse Form -------*/
+
+#browse-dis-form-container{
+    margin-bottom: 80px;
+    overflow: hidden;
+}
+.browse-dis-form-element {
+  float:left;
+  margin-right: 20px;
+}
+
+/*-------------View Discussion------------------------*/
+#viewDiscussionFirstRecording {
+  /*border: 1px solid lightgray;
+  border-radius: 7px;
+  box-shadow: 10px 10px 5px #888888;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;*/
+}
+#view-discussion-comments-block {
+  padding-top: 30px;
+}
+/*Create*/
+.rButtons {
+  width: 140px;
+  height: 34px;
+}
+#create-loading-message {
+  display: none;
+}
+/*View Discussion*/
+#view-discussion-supporting-article {
+  margin-top: 20px;
+}
+/*REPLY*/
+#repliesSection {
+  margin-top: 50px;
+}
+#errorMessage {
+  display: none;
+}
+#view-discussion-control-box {
+  overflow: hidden;
+  width: 100%;
+}
+.view-discussion-controls {
+  display: inline-block;
+  margin-top: 50px;
+}
+#dd-loading-message {
+  display: none;
+}
+
+/*---------- Topics -------------------*/
+.topicName {
+  font-size: 1.5em;
+}
+.topicPageButtons {
+  background-color: rgb(64,0,128) !important;
+}
+#topicsFormFilterContainer{
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+.topicsFormElement {
+  float:left;
+  margin-right: 20px;
+}
+
+#topicsListContainer {
+  margin-top: 30px;
+}
+#new {
+  display: none;
+}

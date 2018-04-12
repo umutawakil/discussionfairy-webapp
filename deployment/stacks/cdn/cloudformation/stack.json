@@ -1,0 +1,173 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Template for the recording CDN and static files CDN",
+  "Parameters": {
+    "ViewerTLSVersion": {
+      "Type": "String",
+      "Description": "TLS version to be used by cloudfront to communicate with the viewer."
+    }
+  },
+  "Resources": {
+    "RecordingSourceBucket":{
+      "Type": "AWS::S3::Bucket",
+      "Description": "S3 Bucket for storing uploaded recordings",
+      "Properties": {
+        "BucketName": {"Fn::Join": ["",["discussionfairy-recordings-",{"Fn::ImportValue" : "Environment"}]]},
+      }
+    },
+    "RecordingSourceBucketIAMPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "lambda-s3-upload",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["s3:PutObject","s3:PutObjectAcl"],
+              "Effect": "Allow",
+              "Resource": [{"Fn::Join": ["",[{"Fn::GetAtt": ["RecordingSourceBucket", "Arn"]}]]},{"Fn::Join": ["",[{"Fn::GetAtt": ["RecordingSourceBucket", "Arn"]},"/*"]]}]
+            }
+          ]
+        },
+        "Roles": [ "lambda-execution-role"],
+        "Users": ["recordings-uploader"]
+      }
+    },
+    "LambdaCloudformationIAMPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "lambda-cloudformation-cdn-describstacks",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["cloudformation:describeStacks"],
+              "Effect": "Allow",
+              "Resource": {"Fn::Join": ["",["arn:aws:cloudformation:",{"Ref":"AWS::Region"},":",{"Ref":"AWS::AccountId"},":stack/cdn/*"]]}
+            }
+          ]
+        },
+        "Roles": [ "lambda-execution-role"]
+      }
+    },
+    "RecordingsCloudFrontDistribution": {
+       "Type" : "AWS::CloudFront::Distribution",
+       "Properties" : {
+          "DistributionConfig" : {
+             "Aliases" : [ {"Fn::Join": ["",[{"Fn::ImportValue" : "Environment"},".recordings.discussionfairy.com"]]} ],
+             "ViewerCertificate": {
+                "AcmCertificateArn" : {"Fn::ImportValue" : "CertificateARN"},
+                "SslSupportMethod": "sni-only",
+                "MinimumProtocolVersion": {"Ref":"ViewerTLSVersion"}
+              },
+             "DefaultCacheBehavior" : {
+                 "AllowedMethods": ["GET", "HEAD"],
+                 "TargetOriginId" : "RecordingSourceBucket",
+                 "ForwardedValues" : {
+                     "QueryString" : "true",
+                     "Cookies" : { "Forward" : "all" }
+                 },
+                 "ViewerProtocolPolicy" : "allow-all"
+             },
+             "Enabled" : "true",
+             "Origins" : [ {
+                 "DomainName" : {"Fn::Join": ["",["discussionfairy-recordings-",{"Fn::ImportValue" : "Environment"},".s3.amazonaws.com"]]},
+                 "Id" : "RecordingSourceBucket",
+                 "S3OriginConfig" : {}
+             }]
+          }
+       }
+    },
+    "RecordingsDNSRecord": {
+      "Type": "AWS::Route53::RecordSetGroup",
+      "DependsOn": ["RecordingsCloudFrontDistribution"],
+      "Properties": {
+        "HostedZoneId": {"Fn::ImportValue" : "HostedZoneId"},
+        "RecordSets" : [
+              {
+                "Name" : {"Fn::Join": ["",[{"Fn::ImportValue":"Environment"},".recordings.discussionfairy.com."]]},
+                "Type" : "A",
+                "AliasTarget" : {
+                    "HostedZoneId": {"Fn::ImportValue" : "CloudFrontZoneId"},
+                    "DNSName" : {"Fn::GetAtt": ["RecordingsCloudFrontDistribution", "DomainName"]}
+                }
+              }
+          ]
+      }
+    },
+
+    "MSCBucket":{
+      "Type": "AWS::S3::Bucket",
+      "Description": "S3 Bucket for storing miscellaneous content such as js, images, etc etc",
+      "Properties": {
+        "AccessControl": "PublicRead",
+        "BucketName": {"Fn::Join": ["",["discussionfairy-msc-cdn-",{"Fn::ImportValue" : "Environment"}]]},
+      }
+    },
+    "MSCCloudFrontDistribution": {
+       "Type" : "AWS::CloudFront::Distribution",
+       "Properties" : {
+          "DistributionConfig" : {
+             "Aliases" : [ {"Fn::Join": ["",[{"Fn::ImportValue" : "Environment"},".cdn.discussionfairy.com"]]} ],
+             "ViewerCertificate": {
+                "AcmCertificateArn" : {"Fn::ImportValue" : "CertificateARN"},
+                "SslSupportMethod": "sni-only",
+                "MinimumProtocolVersion": {"Ref":"ViewerTLSVersion"}
+              },
+             "DefaultCacheBehavior" : {
+                 "AllowedMethods" : [ "GET", "HEAD", "OPTIONS"],
+                 "TargetOriginId" : "MSCBucket",
+                 "ForwardedValues" : {
+                     "QueryString" : "true",
+                     "Cookies" : { "Forward" : "all" }
+                 },
+                 "ViewerProtocolPolicy" : "allow-all"
+             },
+             "Enabled" : "true",
+             "Origins" : [ {
+                 "DomainName" : {"Fn::Join": ["",["discussionfairy-msc-cdn-",{"Fn::ImportValue" : "Environment"},".s3.amazonaws.com"]]},
+                 "Id" : "MSCBucket",
+                 "S3OriginConfig" : {}
+             }]
+          }
+       }
+    },
+    "MSCDNSRecord": {
+      "Type": "AWS::Route53::RecordSetGroup",
+      "DependsOn": ["MSCCloudFrontDistribution"],
+      "Properties": {
+        "HostedZoneId": {"Fn::ImportValue": "HostedZoneId"},
+        "RecordSets" : [
+              {
+                "Name" :{"Fn::Join": ["",[{"Fn::ImportValue" : "Environment"},".cdn.discussionfairy.com."]]},
+                "Type" : "A",
+                "AliasTarget" : {
+                    "HostedZoneId": {"Fn::ImportValue" : "CloudFrontZoneId"},
+                    "DNSName" : {"Fn::GetAtt": ["MSCCloudFrontDistribution", "DomainName"]}
+                }
+              }
+          ]
+      }
+    }
+  },
+  "Outputs" : {
+    "RecordingSourceURL" : {
+      "Description" : "URL to use serve recordings from",
+      "Value" : {"Fn::Join": ["",["https://",{"Fn::ImportValue" : "Environment"},".recordings.discussionfairy.com"]]}
+    },
+    "RecordingUploadURL" : {
+      "Description" : "URL to upload recordings to.",
+      "Value" : {"Fn::Join": ["",["https://",{"Fn::GetAtt": ["RecordingSourceBucket", "DomainName"]}]]}
+    },
+    "RecordingSourceBucket" : {
+      "Description" : "s3 bucket serving recordings",
+      "Value" :{"Fn::Join": ["",["discussionfairy-recordings-",{"Fn::ImportValue" : "Environment"}]]}
+    },
+    "PublicCDNURL" : {
+      "Description" : "URL to use serve miscellaneous content from.",
+      "Value" :{"Fn::Join": ["",["https://",{"Fn::ImportValue" : "Environment"},".cdn.discussionfairy.com"]]}
+    },
+    "PublicCDNBucket" : {
+      "Description" : "s3 bucket serving miscellaneous content.",
+      "Value" :{"Fn::Join": ["",["discussionfairy-msc-cdn-",{"Fn::ImportValue" : "Environment"}]]}
+    }
+  }
+}

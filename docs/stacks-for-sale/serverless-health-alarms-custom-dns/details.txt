@@ -1,0 +1,2 @@
+-This file came from an architecture that included many stacks so a user of this stack needs to add the needed IAM policies, especially cloudwatch access,
+and create a role that their functions can be ran as.

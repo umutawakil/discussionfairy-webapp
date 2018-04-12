@@ -1,0 +1,86 @@
+[
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "prod"
+  },
+  {
+    "ParameterKey": "DomainName",
+    "ParameterValue": "discussionfairy.com"
+  },
+  {
+    "ParameterKey": "CloudFrontZoneId",
+    "ParameterValue": "Z2FDTNDATAQYW2"
+  },
+  {
+    "ParameterKey": "ApiGatewayZoneId",
+    "ParameterValue": "Z1UJRXOUMOOFQ8"
+  },
+  {
+    "ParameterKey": "S3ZoneId",
+    "ParameterValue": "Z3AQBSTGFYJSTF"
+  },
+  {
+    "ParameterKey": "HostedZoneId",
+    "ParameterValue": "Z2V8RNH4MX8MG6"
+  },
+  {
+    "ParameterKey": "CertificateARN",
+    "ParameterValue": "arn:aws:acm:us-east-1:298959928212:certificate/035e4c43-721d-47ab-87b2-5fac0eff8a3f"
+  },
+  {
+    "ParameterKey": "NotificationEmail",
+    "ParameterValue": "usman.mutawakil@gmail.com"
+  },
+  {
+    "ParameterKey": "NotificationCellPhone",
+    "ParameterValue": "17745732792"
+  } ,
+  {
+    "ParameterKey": "AdminUser",
+    "ParameterValue": "usman_mutawakil"
+  },
+  {
+    "ParameterKey": "DeploymentBucket",
+    "ParameterValue": "discussionfairy-prod-deployment"
+  },
+  {
+    "ParameterKey": "FailoverBucket",
+    "ParameterValue": "discussionfairy-failover"
+  },
+  {
+    "ParameterKey": "ViewerTLSVersion",
+    "ParameterValue": "TLSv1.2_2018"
+  },
+  {
+    "ParameterKey": "APNSEnvironment",
+    "ParameterValue": "APNS"
+  },
+  {
+    "ParameterKey": "APNSApplication",
+    "ParameterValue": "DiscussionFairy-production"
+  },
+  {
+    "ParameterKey": "APNSApplicationARN",
+    "ParameterValue": "arn:aws:sns:us-east-1:298959928212:app/APNS/DiscussionFairy-production"
+  },
+  {
+    "ParameterKey":"GCMApplicationARN",
+    "ParameterValue": "arn:aws:sns:us-east-1:298959928212:app/GCM/DiscussionFairy-production-gcm"
+  },
+  {
+    "ParameterKey": "VpcId",
+    "ParameterValue": "vpc-44de8121"
+  },
+  {
+    "ParameterKey":"CIDR",
+    "ParameterValue":"172.31.0.0/16"
+  },
+  {
+    "ParameterKey":"DBSubnetId",
+    "ParameterValue":"subnet-ab3a8c80"
+  },
+  {
+    "ParameterKey":"RDSPort",
+    "ParameterValue":"3344"
+  }
+]

@@ -1,0 +1,291 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Template for a serverless application driven by Lambda & API Gateway",
+  "Parameters": {
+    "SystemName": {
+      "Description": "Name of system associated with this template",
+      "Type": "String"
+    },
+    "HomeSystemName": {
+      "Description": "Name of system associated with this template",
+      "Type": "String"
+    },
+    "DeploymentBucket": {
+      "Type": "String",
+      "Description": "The S3 Bucket that holds the deployment artifacts"
+    },
+    "ChangeId": {
+      "Type": "String",
+      "Description": "The git commit id that will trigger new builds"
+    },
+    "NodeJsRuntime": {
+      "Type": "String",
+      "Description": "The version of node to run."
+    },
+    "DomainName": {
+      "Type": "String",
+      "Description": "Domain name for this environment"
+    },
+    "HomeDomainName": {
+      "Type": "String",
+      "Description": "Domain name for this environment"
+    },
+    "CloudFrontZoneId": {
+      "Type": "String",
+      "Description": "ZoneId for cloudfront."
+    },
+    "HostedZoneId": {
+      "Type": "String",
+      "Description": "ZoneId for where the new record is to be created."
+    },
+    "CertificateARN": {
+      "Type": "String",
+      "Description": "ARN for the SSL cert to be used."
+    },
+    "StageName": {
+      "Type": "String",
+      "Description": "Name of the API Gateway stage this api will live in."
+    },
+    "HomeStageName": {
+      "Type": "String",
+      "Description": "Name of the API Gateway stage this api will live in."
+    }
+  },
+  "Resources": {
+    "LambdaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{ "Effect": "Allow", "Principal": {"Service": ["lambda.amazonaws.com"]}, "Action": ["sts:AssumeRole"] }]
+        },
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "log-access",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [{ "Effect": "Allow", "Action": ["logs:*"], "Resource": "arn:aws:logs:*:*:*" }]
+          }
+        }]
+      }
+    },
+    "LambdaIAMPolicy": {
+      "DependsOn": ["LambdaExecutionRole"],
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "LambdaAccessPolicy",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["dynamodb:*"],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": ["es:*"],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ]
+      }
+    },
+    "MainLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "index.handler",
+        "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
+        "Code": {
+          "S3Bucket": {"Ref": "DeploymentBucket"},
+          "S3Key": {"Fn::Join": ["",["deployments/",{"Ref": "ChangeId"},".zip"]]}
+        },
+        "Runtime": {"Ref": "NodeJsRuntime"},
+        "Timeout": "25"
+      }
+    },
+    "LambdaPermission": {
+      "DependsOn":"MainLambdaFunction",
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:invokeFunction",
+        "FunctionName": {"Fn::GetAtt": ["MainLambdaFunction", "Arn"]},
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {"Fn::Join": ["",
+          ["arn:aws:execute-api:", {"Ref": "AWS::Region"}, ":", {"Ref": "AWS::AccountId"}, ":", {"Ref": "RestApiResource"}, "/*"]
+        ]}
+      }
+    },
+    "RestApiResource": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": {"Ref":"SystemName"},
+        "FailOnWarnings" : true
+      }
+    },
+    "ApiGatewayStage":    {
+      "Type" : "AWS::ApiGateway::Stage",
+      "Properties" : {
+        "DeploymentId" :{"Ref":"ApiDeploymentResource"},
+        "MethodSettings" : [{
+          "HttpMethod" : "GET",
+          "ResourcePath" : "/*"
+        },{
+          "HttpMethod" : "POST",
+          "ResourcePath" : "/*"
+        }],
+        "RestApiId" : {"Ref":"RestApiResource"},
+        "StageName": {"Ref":"StageName"}
+      }
+    },
+    "ApiGatewayURLMapping": {
+      "DependsOn" :["ApiGatewayDomainName"],
+      "Type": "AWS::ApiGateway::BasePathMapping",
+      "Properties": {
+        "DomainName": {"Ref": "DomainName"},
+        "RestApiId": {"Ref": "RestApiResource"},
+        "Stage": {"Ref": "StageName"}
+      }
+    },
+    "SecondaryApiGatewayResource": {
+      "DependsOn":[],
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {"Ref": "RestApiResource"},
+        "ParentId": {"Fn::GetAtt": ["RestApiResource", "RootResourceId"]},
+        "PathPart": "{proxy+}"
+      }
+    },
+    "ApiDeploymentResource": {
+      "DependsOn": ["RestApiResource","PrimaryApiGatewayMethodResource"],
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "RestApiResource"
+        }
+      }
+    },
+    "PrimaryApiGatewayMethodResource": {
+      "DependsOn": ["LambdaPermission"],
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "ANY",
+        "Integration": {
+          "Type": "AWS_PROXY",
+          "IntegrationHttpMethod": "POST",
+          "PassthroughBehavior": "NEVER",
+          "IntegrationResponses": [{
+            "ResponseTemplates": {
+              "application/json": { "Fn::Join" : ["", [
+                "#set($allParams = $input.params())\n",
+                "{\n",
+                "\"params\" : {\n",
+                "#foreach($type in $allParams.keySet())\n",
+                "#set($params = $allParams.get($type))\n",
+                "\"$type\" : {\n",
+                "#foreach($paramName in $params.keySet())\n",
+                "\"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n",
+                "#if($foreach.hasNext),#end\n",
+                "#end\n",
+                "}\n",
+                "#if($foreach.hasNext),#end\n",
+                "#end\n",
+                "}\n",
+                "}\n"
+              ]]}
+            },
+            "StatusCode": 200
+          }],
+          "Uri": {"Fn::Join" : ["",
+            ["arn:aws:apigateway:", {"Ref": "AWS::Region"}, ":lambda:path/2015-03-31/functions/", {"Fn::GetAtt": ["MainLambdaFunction", "Arn"]}, "/invocations"]
+          ]}
+        },
+        "ResourceId": {"Fn::GetAtt": ["RestApiResource", "RootResourceId"]},
+        "RestApiId": {"Ref": "RestApiResource"}
+      }
+    },
+    "SecondaryApiGatewayMethodResource": {
+      "DependsOn": ["LambdaPermission"],
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "ANY",
+        "Integration": {
+          "Type": "AWS_PROXY",
+          "IntegrationHttpMethod": "POST",
+          "PassthroughBehavior": "NEVER",
+          "IntegrationResponses": [{
+            "ResponseTemplates": {
+              "application/json": { "Fn::Join" : ["", [
+                "#set($allParams = $input.params())\n",
+                "{\n",
+                "\"params\" : {\n",
+                "#foreach($type in $allParams.keySet())\n",
+                "#set($params = $allParams.get($type))\n",
+                "\"$type\" : {\n",
+                "#foreach($paramName in $params.keySet())\n",
+                "\"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n",
+                "#if($foreach.hasNext),#end\n",
+                "#end\n",
+                "}\n",
+                "#if($foreach.hasNext),#end\n",
+                "#end\n",
+                "}\n",
+                "}\n"
+              ]]}
+            },
+            "StatusCode": 200
+          }],
+          "Uri": {"Fn::Join" : ["",
+            ["arn:aws:apigateway:", {"Ref": "AWS::Region"}, ":lambda:path/2015-03-31/functions/", {"Fn::GetAtt": ["MainLambdaFunction", "Arn"]}, "/invocations"]
+          ]}
+        },
+        "ResourceId": {"Ref": "SecondaryApiGatewayResource"},
+        "RestApiId": {"Ref": "RestApiResource"}
+      }
+    },
+    "ApiGatewayDomainName": {
+      "Type": "AWS::ApiGateway::DomainName",
+      "Properties": {
+        "DomainName": {"Ref":"DomainName"},
+        "CertificateArn": {"Ref":"CertificateARN"}
+      }
+    },
+    "DNSRecord": {
+      "Type": "AWS::Route53::RecordSetGroup",
+      "DependsOn": ["ApiGatewayDomainName"],
+      "Properties": {
+        "HostedZoneId": {"Ref": "HostedZoneId"},
+        "RecordSets" : [
+              {
+                "Name" : {"Fn::Join": ["",[{"Ref": "DomainName"},"."]]},
+                "Type" : "A",
+                "AliasTarget" : {
+                    "HostedZoneId": {"Ref": "CloudFrontZoneId"},
+                    "DNSName" : {"Fn::GetAtt": ["ApiGatewayDomainName", "DistributionDomainName"]}
+                }
+              }
+          ]
+      }
+    }
+  },
+  "Outputs" : {
+    "ApiId" : {
+      "Description" : "Id of the api",
+      "Value" : {"Ref":"RestApiResource"}
+    },
+    "CloudFrontDistribution" : {
+      "Description" : "The non-public CF host name",
+      "Value" : {"Fn::GetAtt": ["ApiGatewayDomainName", "DistributionDomainName"]}
+    },
+    "URL": {
+      "Description" : "The URL of this endpoint",
+      "Value" : {"Ref":"DomainName"}
+    }
+  }
+}

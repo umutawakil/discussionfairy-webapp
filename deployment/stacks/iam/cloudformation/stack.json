@@ -1,0 +1,102 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Template for the IAM entities (Users,Roles,Groups - Not policies) needed to run the various stacks",
+  "Parameters": {
+  },
+  "Resources": {
+    "ApplicationTestUser":{
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": {"Fn::Join": ["",["application-test-user"]]}
+      },
+    },
+    "UploaderUser":{
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "UserName": {"Fn::Join": ["",["recordings-uploader"]]}
+      },
+    },
+    "UploaderCreds":{
+     "DependsOn" : ["UploaderUser"],
+     "Type": "AWS::IAM::AccessKey",
+     "Properties": {
+        "UserName": "recordings-uploader"
+      }
+    },
+    "LambdaExecutionRole": {
+      "DependsOn": ["ApplicationTestUser"],
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": {"Fn::Join": ["",["lambda-execution-role"]]},
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+             "Effect": "Allow",
+             "Principal": {"Service": ["lambda.amazonaws.com"]},
+             "Action": ["sts:AssumeRole"]
+           },
+           {
+            "Effect": "Allow",
+            "Principal": {"AWS": [{"Fn::GetAtt": ["ApplicationTestUser", "Arn"]}]},
+            "Action": ["sts:AssumeRole"]
+          }]
+        }
+      }
+    },
+    "LambdaCloudWatchAccessPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "lambda-cloudwatch-access",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["logs:CreateLogGroup","logs:CreateLogStream","logs:PutLogEvents","logs:DescribeLogStreams"],
+              "Effect": "Allow",
+              "Resource": "arn:aws:logs:*:*:*"
+            }
+          ]
+        },
+        "Roles": [ "lambda-execution-role"]
+      }
+    },
+    "LambdaCloudformationIAMPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "lambda-cloudformation-iam-describstacks-",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["cloudformation:describeStacks"],
+              "Effect": "Allow",
+              "Resource": {"Fn::Join": ["",["arn:aws:cloudformation:",{"Ref":"AWS::Region"},":",{"Ref":"AWS::AccountId"},":stack/iam/*"]]}
+            }
+          ]
+        },
+        "Roles": [ "lambda-execution-role"]
+      }
+    },
+  },
+  "Outputs" : {
+    "LambdaExecutionRole" : {
+      "Description" : "ARN for the role Lambda will use to acces various resources",
+      "Value" : {"Fn::GetAtt": ["LambdaExecutionRole", "Arn"]}
+    },
+    "ApplicationTestUser" : {
+      "Description" : "ARN for the application test user",
+      "Value" : {"Fn::GetAtt": ["ApplicationTestUser", "Arn"]}
+    },
+    "UploaderAccessKey": {
+      "Value": {"Ref":"UploaderCreds"},
+      "Export":{
+        "Name":"UploaderAccessKey"
+      }
+    }    ,
+    "UploaderSecretKey": {
+      "Value": {"Fn::GetAtt": ["UploaderCreds", "SecretAccessKey"]},
+      "Export":{
+        "Name":"UploaderSecretKey"
+      }
+    }
+  }
+}

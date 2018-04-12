@@ -1,0 +1,57 @@
+{% extends "layouts/main.html" %}
+
+{% block title %}
+    <title>{{discussion.discussionTitle}}</title>
+{% endblock %}
+
+{% block searchEngineMeta %}
+  {% include "../discussion/partials/vd-search-engine-meta.html" %}
+{% endblock %}
+
+{% block body %}
+    <div style="visibility: hidden;"> <audio id="markerAudio" controls><source src=""></audio></div>
+
+    <span id="view-discussion" style="display: none;"></span>
+    <div class="container">
+      <div class="page-header">
+        <h1 class="keyFont">{{discussion.discussionTitle}} (#{{discussion.discussionId}})</h1>
+        <div id="viewDiscussionFirstRecording" class="discussionAudioControl">
+          <audio id="{{recordingSourceURL}}/{{discussion.key}}" controls>
+              <source src="{{recordingSourceURL}}/{{discussion.key}}">
+              <!--<source src="horse.mp3" type="audio/mpeg">-->
+              Your browser does not support the audio element.
+          </audio>
+        </div>
+      </div>
+      <div id="viewDiscussionInfo" class="">
+        <p><span>Related Topics:&nbsp;</span>
+          {% for k in discussion.keywords %}
+            <a href="/?topic={{k}}"><span style="text-transform: capitalize;">{{k}}</span></a>,&nbsp;
+          {% endfor %}
+        </p>
+        <p>Location:&nbsp;<a href="/?location={{discussion.location}}">{{discussion.location}}</a></p>
+        <p>Language:&nbsp;<a href="/?language={{discussion.language}}">{{discussion.language}}</a></p>
+        <!--<p>Discussion ID:&nbsp;<a href="/{{discussion.discussionId}}">#{{discussion.discussionId}}</a></p>-->
+        {% if discussion.referenceLink %}
+          <p>Reference Link:&nbsp;<a target=_blank href="{{discussion.referenceLink}}">{{discussion.referenceLink}}</a></p>
+        {% endif %}
+        <p>
+      </div>
+      <div id="view-discussion-comments-block">
+        <H2  class="keyFont">Comments</H2>
+        {% if comments == 0 %}
+          <p>There are no comments yet in this discussion
+          </p>
+        {% endif %}
+        {% for c in comments %}
+          <div class="discussionAudioControl">
+            <audio id="{{recordingSourceURL}}/{{c.key}}" controls>
+                <source src="{{recordingSourceURL}}/{{c.key}}">
+                <!--<source src="horse.mp3" type="audio/mpeg">-->
+                Your browser does not support the audio element.
+            </audio>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+{% endblock %}

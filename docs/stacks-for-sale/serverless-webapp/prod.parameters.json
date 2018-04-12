@@ -1,0 +1,50 @@
+[
+  {
+    "ParameterKey": "SystemName",
+    "ParameterValue": "app-stack-prod"
+  },
+  {
+    "ParameterKey": "HomeSystemName",
+    "ParameterValue": "app-stack-prod-home-api"
+  },
+  {
+    "ParameterKey": "DeploymentBucket",
+    "ParameterValue": "discussionfairy-prod-deployment"
+  },
+  {
+    "ParameterKey": "ChangeId",
+    "ParameterValue": "xxxxxxxxxxxxxxxxxx"
+  },
+  {
+    "ParameterKey": "NodeJsRuntime",
+    "ParameterValue": "nodejs6.10"
+  },
+  {
+    "ParameterKey": "DomainName",
+    "ParameterValue": "stage.discussionfairy.com"
+  },
+  {
+    "ParameterKey": "HomeDomainName",
+    "ParameterValue": "stagehome.discussionfairy.com"
+  },
+  {
+    "ParameterKey": "CloudFrontZoneId",
+    "ParameterValue": "Z2FDTNDATAQYW2"
+  },
+  {
+    "ParameterKey": "HostedZoneId",
+    "ParameterValue": "Z2V8RNH4MX8MG6"
+  },
+  {
+    "ParameterKey": "CertificateARN",
+    "ParameterValue": "arn:aws:acm:us-east-1:298959928212:certificate/31c4b439-f0f5-46d6-b949-32adb3832969"
+  },
+  {
+    "ParameterKey": "StageName",
+    "ParameterValue": "discussionfairy"
+  },
+  {
+    "ParameterKey": "HomeStageName",
+    "ParameterValue": "discussionfairyhome"
+  }
+]

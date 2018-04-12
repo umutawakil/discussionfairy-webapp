@@ -1,0 +1,5 @@
+This stack uses a custom domain name to serve a webapp, not just a web service, from a single domain. It requires 2 api gateway endpoints, 1 to serve
+the homepage base url of "/" and another to serve everthing after that. Its been near impossible to find an example of this kind of stack as serverless has been
+advertised most as a mechanism for micro-services and not so much full app deployment. But the mechanism is here if anyone would be interested in using it.
+
+The architectural deployment approach would be of value to.

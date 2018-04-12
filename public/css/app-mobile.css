@@ -1,0 +1,148 @@
+* {
+  margin: 0px;
+  padding: 0px;
+}
+body {
+  font-family: 'Montserrat','Open Sans', sans-serif;
+}
+.keyFont {
+  font-family: 'Montserrat','Open Sans', sans-serif;
+  word-break: break-all;
+}
+/*----------------HEADER-------------------------------------*/
+
+#header {
+  width:100%;
+  /*position:fixed;
+  top:0px;*/
+  margin-bottom: 20px;
+  background-color: white;
+}
+
+#hamburgerMenu span
+{
+  display: block;
+  width: 33px;
+  height: 4px;
+  margin-bottom: 5px;
+  position: relative;
+  background: rgb(64,0,128);
+  border-radius: 3px;
+  z-index: 1;
+}
+
+#logo {
+  margin-top: 10px;
+  width: 40px;
+  height: 30px;
+  margin-left: 10px;
+}
+#logoDiv {
+  padding-right: 40px;
+  display: inline-block;
+}
+
+#dropDownMenu {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  z-index: 5;
+}
+
+#dropDownMenu-list li {
+  width: 900px;
+}
+
+/*------------------------Home----------------------------------*/
+#browse-content {
+  margin-top: 20px;
+}
+.discussionAudioControl {
+  /*margin-top: 20px;
+  border: 1px solid lightgray;
+  border-radius: 7px;
+  box-shadow: 10px 10px 5px #888888;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;*/
+
+  margin: 0px auto;
+
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  box-shadow: 10px 10px 5px #888888;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.discussionsListElement {
+  margin-bottom: 40px;
+}
+
+.pageNumberContainer {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+.pageButtonUnit {
+  display: inline-block;
+}
+
+/*-----------------------Sort Tab -----------------------------*/
+.sortTab {
+  border-bottom: 1px solid rgb(64,0,128);
+  width: 49%;
+  margin-bottom: 20px;
+}
+.selectedTab {
+  background-color:rgb(64,0,128);
+  color: white;
+}
+
+/*--------------------Discussion List Body ----------------------*/
+ .discussionListTitle {
+   word-break: break-all;
+   margin-bottom: 20px;
+   font-size: 1.5em;
+ }
+
+ #content {
+   padding-left: 10px;
+   padding-right: 10px;
+   padding-bottom: 10px;
+ }
+
+ /*-------------View Discussion------------------------*/
+ #viewDiscussionFirstRecording {
+   border: 1px solid lightgray;
+   border-radius: 10px;
+   box-shadow: 10px 10px 5px #888888;
+   text-align: center;
+   padding-top: 10px;
+   padding-bottom: 10px;
+ }
+ #view-discussion-comments-block {
+   text-align: center;
+   padding-top: 30px;
+ }
+ #viewDiscussionInfo {
+   margin-top: 25px;
+   text-align: center;
+ }
+
+/*-----------Browse Topics-----------------------------*/
+.topicsFormElement {
+  margin-bottom: 20px;
+}
+#topicsFormFilterContainer {
+  margin-bottom: 20px;
+}
+.topicListElement {
+  font-size: 1.5em;
+}
+ /*--------------------Footer----------------------------*/
+ footer {
+   margin-top: 25px;
+ }
+ footer ul li {
+   margin-bottom: 10px;
+ }

@@ -1,0 +1,239 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Template for configuration stack that exports common values to other stacks",
+  "Parameters": {
+    "Environment": {
+      "Type": "String",
+      "Description": "The environment associated with this account"
+    },
+    "DomainName": {
+      "Type": "String",
+      "Description": "Domain name for this environment"
+    },
+    "FailoverBucket": {
+      "Type": "String",
+      "Description": "The bucket holding the failover .index.html file"
+    },
+    "DeploymentBucket": {
+      "Type": "String",
+      "Description": "The S3 Bucket that holds the deployment artifacts"
+    },
+    "CloudFrontZoneId": {
+      "Type": "String",
+      "Description": "ZoneId for cloudfront."
+    },
+    "ApiGatewayZoneId": {
+      "Type": "String",
+      "Description": "ZoneId for ApiGateway."
+    },
+    "S3ZoneId": {
+      "Type": "String",
+      "Description": "ZoneId for s3."
+    },
+    "HostedZoneId": {
+      "Type": "String",
+      "Description": "ZoneId for where the new record is to be created."
+    },
+    "CertificateARN": {
+      "Type": "String",
+      "Description": "ARN for the SSL cert to be used."
+    },
+    "NotificationEmail": {
+      "Type": "String",
+      "Description": "Email to send Notiffications/Alerts."
+    },
+    "NotificationCellPhone": {
+      "Description": "Cell phone to send Notifications/Alerts.",
+      "Type": "String"
+    },
+    "APNSEnvironment": {
+      "Description": "The APNS environment",
+      "Type": "String"
+    },
+    "AdminUser": {
+      "Description": "User that can look at the ES cluster from their local machine",
+      "Type": "String"
+    },
+    "ViewerTLSVersion": {
+      "Type": "String",
+      "Description": "TLS version to be used by cloudfront to communicate with the viewer."
+    },
+    "APNSEnvironment": {
+      "Type": "String",
+      "Description": "The APNS environment"
+    },
+    "APNSApplication": {
+      "Type": "String",
+      "Description": "The apns application"
+    } ,
+    "APNSApplicationARN": {
+      "Type": "String",
+      "Description": "The ARN of the apns application"
+    },
+    "GCMApplicationARN": {
+      "Type": "String",
+      "Description": "The ARN of the GCM application"
+    },
+    "VpcId": {
+      "Type": "String"
+    },
+    "CIDR": {
+      "Type": "String"
+    },
+    "DBSubnetId": {
+      "Type": "String"
+    },
+    "RDSPort": {
+      "Type": "String"
+    }
+  },
+  "Resources" : {
+    "LambdaCloudformationIAMPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "lambda-cloudformation-configuration-describstacks-",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["cloudformation:describeStacks"],
+              "Effect": "Allow",
+              "Resource": {"Fn::Join": ["",["arn:aws:cloudformation:",{"Ref":"AWS::Region"},":",{"Ref":"AWS::AccountId"},":stack/configuration/*"]]}
+            }
+          ]
+        },
+        "Roles": [ "lambda-execution-role"]
+      }
+    },
+  },
+  "Outputs" : {
+    "Environment": {
+      "Description": "The environment associated with this account",
+      "Value": {"Ref":"Environment"},
+      "Export":{
+        "Name":"Environment"
+      }
+    },
+    "DomainName": {
+      "Description": "Primary Domain name",
+      "Value": {"Ref":"DomainName"},
+      "Export":{
+        "Name":"DomainName"
+      }
+    },
+    "CloudFrontZoneId": {
+      "Value": {"Ref":"CloudFrontZoneId"},
+      "Export":{
+        "Name":"CloudFrontZoneId"
+      }
+    },
+    "ApiGatewayZoneId": {
+      "Value": {"Ref":"ApiGatewayZoneId"},
+      "Export":{
+        "Name":"ApiGatewayZoneId"
+      }
+    },
+    "S3ZoneId": {
+      "Value": {"Ref":"S3ZoneId"},
+      "Export":{
+        "Name":"S3ZoneId"
+      }
+    },
+    "HostedZoneId": {
+      "Value": {"Ref":"HostedZoneId"},
+      "Export":{
+        "Name":"HostedZoneId"
+      }
+    },
+    "CertificateARN": {
+      "Value": {"Ref":"CertificateARN"},
+      "Export":{
+        "Name":"CertificateARN"
+      }
+    },
+    "NotificationEmail": {
+      "Value": {"Ref":"NotificationEmail"},
+      "Export":{
+        "Name":"NotificationEmail"
+      }
+    },
+    "NotificationCellPhone": {
+      "Value": {"Ref":"NotificationCellPhone"},
+      "Export":{
+        "Name":"NotificationCellPhone"
+      }
+    },
+    "AdminUser": {
+      "Description": "User that can utilize direct access to ES cluster",
+      "Value": {"Ref":"AdminUser"},
+      "Export":{
+        "Name":"AdminUser"
+      }
+    },
+    "DeploymentBucket": {
+      "Value": {"Ref":"DeploymentBucket"},
+      "Export":{
+        "Name":"DeploymentBucket"
+      }
+    },
+    "FailoverBucket": {
+      "Value": {"Ref":"FailoverBucket"},
+      "Export":{
+        "Name":"FailoverBucket"
+      }
+    },
+    "ViewerTLSVersion": {
+      "Value": {"Ref":"ViewerTLSVersion"},
+      "Export":{
+        "Name":"ViewerTLSVersion"
+      }
+    },
+    "APNSEnvironment": {
+      "Value": {"Ref":"APNSEnvironment"},
+      "Export":{
+        "Name":"APNSEnvironment"
+      }
+    },
+    "APNSApplication": {
+      "Value": {"Ref":"APNSApplication"},
+      "Export":{
+        "Name":"APNSApplication"
+      }
+    },
+    "APNSApplicationARN": {
+      "Value": {"Ref":"APNSApplicationARN"},
+      "Export":{
+        "Name":"APNSApplicationARN"
+      }
+    },
+    "GCMApplicationARN": {
+      "Value": {"Ref":"GCMApplicationARN"},
+      "Export":{
+        "Name":"GCMApplicationARN"
+      }
+    },
+    "CIDR": {
+      "Value": {"Ref":"CIDR"},
+      "Export":{
+        "Name":"CIDR"
+      }
+    },
+    "VpcId": {
+      "Value": {"Ref":"VpcId"},
+      "Export":{
+        "Name":"VpcId"
+      }
+    },
+    "DBSubnetId": {
+      "Value": {"Ref":"DBSubnetId"},
+      "Export":{
+        "Name":"DBSubnetId"
+      }
+    },
+    "RDSPort": {
+      "Value": {"Ref":"RDSPort"},
+      "Export":{
+        "Name":"RDSPort"
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+
+<div class="discussionsListElement">
+    <p class="discussionTitle"><a href="/{{d.discussionId | urlencode}}">{{d.discussionTitle}} (#{{d.displayDiscussionId}})</a></p>
+
+    <div class="discussionAudioControl">
+        <audio id="{{recordingSourceURL}}/{{d.key}}" controls>
+            <source src="{{recordingSourceURL}}/{{d.key}}">
+            <!--<source src="horse.mp3" type="audio/mpeg">-->
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+    <BR/>
+    <div class="discussionsListLowerControls">
+
+        <p><span>Related Topics:&nbsp;</span>
+            <a href="/?topic={{d.k1 | urlencode}}"><span style="text-transform: capitalize;">{{d.k1}}</span></a>,&nbsp;
+            <a href="/?topic={{d.k2 | urlencode}}"><span style="text-transform: capitalize;">{{d.k2}}</span></a>,&nbsp;
+            <a href="/?topic={{d.k3 | urlencode}}"><span style="text-transform: capitalize;">{{d.k3}}</span></a>,&nbsp;
+        </p>
+
+        <p>Location:&nbsp;<a href="/?location={{d.location | urlencode}}/">{{d.location}}</a></p>
+        <p>Language:&nbsp;<a href="/?language={{d.language | urlencode}}">{{d.language}}</a></p>
+        {% if d.referenceLink %}
+          <p>Reference Link:&nbsp;<a target=_blank href="{{d.referenceLink}}">{{d.referenceLink}}</a></p>
+        {% endif %}
+        <p>Discussion ID:&nbsp;<a href="/{{d.discussionId | urlencode}}">#{{d.displayDiscussionId}} </a></p>
+        <p>Discussion:<a href="/{{d.discussionId | urlencode}}">&nbsp;Comments ({{ "0" if not d.comments else d.comments}})</a></p>
+    </div>
+</div>

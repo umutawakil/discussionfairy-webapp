@@ -1,0 +1,421 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Template for a serverless application driven by Lambda & API Gateway",
+  "Parameters": {
+    "SystemName": {
+      "Description": "Name of system associated with this template",
+      "Type": "String"
+    },
+    "ChangeId": {
+      "Type": "String",
+      "Description": "The git commit id that will trigger new builds"
+    },
+    "NodeJsRuntime": {
+      "Type": "String",
+      "Description": "The version of node to run."
+    },
+    "StageName": {
+      "Type": "String",
+      "Description": "Name of the API Gateway stage this api will live in."
+    },
+    "HealthCheckPath": {
+      "Type": "String",
+      "Description": "The path for a health check"
+    }
+  },
+  "Resources": {
+    "MainLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "index.handler",
+        "Environment":{
+          "Variables":{
+            "ESEndPointURL":{"Fn::ImportValue" : "ESEndPointURL"}
+          }
+        },
+        "Role": {"Fn::Join": ["",["arn:aws:iam::",{"Ref":"AWS::AccountId"},":role/lambda-execution-role"]]},
+        "Code": {
+          "S3Bucket": {"Fn::ImportValue": "DeploymentBucket"},
+          "S3Key": {"Fn::Join": ["",["deployments/",{"Ref": "ChangeId"},".zip"]]}
+        },
+        "Runtime": {"Ref": "NodeJsRuntime"},
+        "Timeout": "25"
+      }
+    },
+    "ApieGatewayLambdaPermission": {
+      "DependsOn":"MainLambdaFunction",
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:invokeFunction",
+        "FunctionName": {"Fn::GetAtt": ["MainLambdaFunction", "Arn"]},
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {"Fn::Join": ["",
+          ["arn:aws:execute-api:", {"Ref": "AWS::Region"}, ":", {"Ref": "AWS::AccountId"}, ":", {"Ref": "RestApiResource"}, "/*"]
+        ]}
+      }
+    },
+    "RestApiResource": {
+      "DependsOn": [],
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": {"Ref":"SystemName"},
+        "FailOnWarnings" : true
+      }
+    },
+    "ApiGatewayStage":    {
+      "Type" : "AWS::ApiGateway::Stage",
+      "Properties" : {
+        "DeploymentId" :{"Ref":"ApiDeploymentResource"},
+        "MethodSettings" : [{
+          "HttpMethod" : "GET",
+          "ResourcePath" : "/*"
+        },{
+          "HttpMethod" : "POST",
+          "ResourcePath" : "/*"
+        }],
+        "RestApiId" : {"Ref":"RestApiResource"},
+        "StageName": {"Ref":"StageName"}
+      }
+    },
+    "ApiGatewayURLMapping": {
+      "DependsOn" :["ApiGatewayDomainName"],
+      "Type": "AWS::ApiGateway::BasePathMapping",
+      "Properties": {
+        "DomainName": {"Fn::Join": ["",["internal.",{"Fn::ImportValue": "DomainName"}]]},
+        "RestApiId": {"Ref": "RestApiResource"},
+        "Stage": {"Ref": "StageName"}
+      }
+    },
+    "SecondaryApiGatewayResource": {
+      "DependsOn":[],
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {"Ref": "RestApiResource"},
+        "ParentId": {"Fn::GetAtt": ["RestApiResource", "RootResourceId"]},
+        "PathPart": "{proxy+}"
+      }
+    },
+    "ApiDeploymentResource": {
+      "DependsOn": ["RestApiResource","PrimaryApiGatewayMethodResource","SecondaryApiGatewayMethodResource"],
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "RestApiResource"
+        }
+      }
+    },
+    "PrimaryApiGatewayMethodResource": {
+      "DependsOn": [],
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "ANY",
+        "Integration": {
+          "Type": "AWS_PROXY",
+          "IntegrationHttpMethod": "POST",
+          "PassthroughBehavior": "NEVER",
+          "IntegrationResponses": [{
+            "ResponseTemplates": {
+              "application/json": { "Fn::Join" : ["", [
+                "#set($allParams = $input.params())\n",
+                "{\n",
+                "\"params\" : {\n",
+                "#foreach($type in $allParams.keySet())\n",
+                "#set($params = $allParams.get($type))\n",
+                "\"$type\" : {\n",
+                "#foreach($paramName in $params.keySet())\n",
+                "\"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n",
+                "#if($foreach.hasNext),#end\n",
+                "#end\n",
+                "}\n",
+                "#if($foreach.hasNext),#end\n",
+                "#end\n",
+                "}\n",
+                "}\n"
+              ]]}
+            },
+            "StatusCode": 200
+          }],
+          "Uri": {"Fn::Join" : ["",
+            ["arn:aws:apigateway:", {"Ref": "AWS::Region"}, ":lambda:path/2015-03-31/functions/", {"Fn::GetAtt": ["MainLambdaFunction", "Arn"]}, "/invocations"]
+          ]}
+        },
+        "ResourceId": {"Fn::GetAtt": ["RestApiResource", "RootResourceId"]},
+        "RestApiId": {"Ref": "RestApiResource"}
+      }
+    },
+    "SecondaryApiGatewayMethodResource": {
+      "DependsOn": ["RestApiResource"],
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "ANY",
+        "Integration": {
+          "Type": "AWS_PROXY",
+          "IntegrationHttpMethod": "POST",
+          "PassthroughBehavior": "NEVER",
+          "IntegrationResponses": [{
+            "ResponseTemplates": {
+              "application/json": { "Fn::Join" : ["", [
+                "#set($allParams = $input.params())\n",
+                "{\n",
+                "\"params\" : {\n",
+                "#foreach($type in $allParams.keySet())\n",
+                "#set($params = $allParams.get($type))\n",
+                "\"$type\" : {\n",
+                "#foreach($paramName in $params.keySet())\n",
+                "\"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n",
+                "#if($foreach.hasNext),#end\n",
+                "#end\n",
+                "}\n",
+                "#if($foreach.hasNext),#end\n",
+                "#end\n",
+                "}\n",
+                "}\n"
+              ]]}
+            },
+            "StatusCode": 200
+          }],
+          "Uri": {"Fn::Join" : ["",
+            ["arn:aws:apigateway:", {"Ref": "AWS::Region"}, ":lambda:path/2015-03-31/functions/", {"Fn::GetAtt": ["MainLambdaFunction", "Arn"]}, "/invocations"]
+          ]}
+        },
+        "ResourceId": {"Ref": "SecondaryApiGatewayResource"},
+        "RestApiId": {"Ref": "RestApiResource"}
+      }
+    },
+    "ApiGatewayDomainName": {
+      "DependsOn": [],
+      "Type": "AWS::ApiGateway::DomainName",
+      "Properties": {
+        "DomainName": {"Fn::Join": ["",["internal.",{"Fn::ImportValue": "DomainName"}]]},
+        "CertificateArn": {"Fn::ImportValue":"CertificateARN"}
+      }
+    },
+
+    "PublicRootDNSRecord": {
+      "Type": "AWS::Route53::RecordSet",
+      "DependsOn": [],
+      "Properties": {
+        "HostedZoneId": {"Fn::ImportValue": "HostedZoneId"},
+        "Name" : {"Fn::Join": ["",[{"Fn::ImportValue": "DomainName"},"."]]},
+        "Type" : "A",
+        "AliasTarget" : {
+            "HostedZoneId": {"Fn::ImportValue": "HostedZoneId"},
+            "DNSName" :  {"Fn::Join": ["",["failable.",{"Fn::ImportValue": "DomainName"}]]}
+        }
+      }
+    },
+    "PublicWorldWideWebDNSRecord": {
+      "Type": "AWS::Route53::RecordSet",
+      "DependsOn": ["PublicRootDNSRecord"],
+      "Properties": {
+        "HostedZoneId": {"Fn::ImportValue": "HostedZoneId"},
+        "Name" : {"Fn::Join": ["",["www.",{"Fn::ImportValue": "DomainName"},"."]]},
+        "Type" : "A",
+        "AliasTarget" : {
+            "HostedZoneId": {"Fn::ImportValue": "HostedZoneId"},
+            "DNSName" :  {"Fn::Join": ["",[{"Fn::ImportValue": "DomainName"},"."]]}
+        }
+      }
+    },
+
+    "FailoverA": {
+      "Type": "AWS::Route53::RecordSet",
+      "DependsOn": [],
+      "Properties": {
+        "HostedZoneId": {"Fn::ImportValue": "HostedZoneId"},
+        "Name" : {"Fn::Join": ["",["failable.",{"Fn::ImportValue": "DomainName"},"."]]},
+        "Type" : "A",
+        "HealthCheckId" : {"Ref":"HealthCheck"},
+        "Failover" : "PRIMARY",
+        "SetIdentifier":"f2",
+        "AliasTarget" : {
+            "HostedZoneId": {"Fn::ImportValue": "CloudFrontZoneId"},
+            "DNSName" :  {"Fn::GetAtt": ["InternalCloudFrontDistribution", "DomainName"]},
+            "EvaluateTargetHealth" : true
+        }
+      }
+    },
+    "FailoverB": {
+      "Type": "AWS::Route53::RecordSet",
+      "DependsOn": ["BackupDNSRecord"],
+      "Properties": {
+        "HostedZoneId": {"Fn::ImportValue": "HostedZoneId"},
+        "Name" : {"Fn::Join": ["",["failable.",{"Fn::ImportValue": "DomainName"},"."]]},
+        "Type" : "A",
+        "HealthCheckId" : {"Ref":"HealthCheck"},
+        "Failover" : "PRIMARY",
+        "SetIdentifier":"f1",
+        "AliasTarget" : {
+            "HostedZoneId": {"Fn::ImportValue": "HostedZoneId"},
+            "DNSName" :  {"Fn::Join": ["",["backup.",{"Fn::ImportValue": "DomainName"}]]}
+        }
+      }
+    },
+    "BackupDNSRecord": {
+      "Type": "AWS::Route53::RecordSet",
+      "DependsOn": [],
+      "Properties": {
+        "HostedZoneId": {"Fn::ImportValue": "HostedZoneId"},
+        "Name" : {"Fn::Join": ["",["backup.",{"Fn::ImportValue": "DomainName"},"."]]},
+        "Type" : "A",
+        "AliasTarget" : {
+            "HostedZoneId": {"Fn::ImportValue": "CloudFrontZoneId"},
+            "DNSName" :  {"Fn::GetAtt": ["FailoverCloudFrontDistribution", "DomainName"]}
+        }
+      }
+    },
+
+    "InternalDNSRecord": {
+      "Type": "AWS::Route53::RecordSet",
+      "DependsOn": [],
+      "Properties": {
+        "HostedZoneId": {"Fn::ImportValue": "HostedZoneId"},
+        "Name" : {"Fn::Join": ["",["internal.",{"Fn::ImportValue": "DomainName"},"."]]},
+        "Type" : "A",
+        "AliasTarget" : {
+          "HostedZoneId": {"Fn::ImportValue": "CloudFrontZoneId"},
+          "DNSName" :  {"Fn::GetAtt": ["ApiGatewayDomainName", "DistributionDomainName"]}
+        }
+      }
+    },
+    "InternalCloudFrontDistribution": {
+      "DependsOn": ["InternalDNSRecord"],
+       "Type" : "AWS::CloudFront::Distribution",
+       "Properties" : {
+          "DistributionConfig" : {
+            "Aliases" : [
+              {"Fn::ImportValue": "DomainName"},
+              {"Fn::Join": ["",["www.",{"Fn::ImportValue": "DomainName"}]]},
+              {"Fn::Join": ["",["failable.",{"Fn::ImportValue": "DomainName"}]]}
+            ],
+            "ViewerCertificate": {
+               "AcmCertificateArn" : {"Fn::ImportValue":"CertificateARN"},
+               "SslSupportMethod": "sni-only",
+               "MinimumProtocolVersion" : {"Fn::ImportValue": "ViewerTLSVersion"}
+             },
+             "DefaultCacheBehavior" : {
+                 "AllowedMethods": ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"],
+                 "TargetOriginId" : "primary",
+                 "ForwardedValues" : {
+                     "QueryString" : "true",
+                     "Cookies" : { "Forward" : "all" }
+                 },
+                 "ViewerProtocolPolicy" : "redirect-to-https"
+             },
+             "Enabled" : "true",
+             "Origins" : [ {
+                 "DomainName" : {"Fn::Join": ["",["internal.",{"Fn::ImportValue": "DomainName"}]]},
+                 "Id" : "primary",
+                 "CustomOriginConfig" : {
+                   "OriginProtocolPolicy" : "match-viewer"
+                 }
+             }]
+          }
+       }
+    },
+
+    "FailoverCloudFrontDistribution": {
+       "Type" : "AWS::CloudFront::Distribution",
+       "Properties" : {
+          "DistributionConfig" : {
+            "Aliases" : [{"Fn::Join": ["",["backup.",{"Fn::ImportValue": "DomainName"}]]}],
+            "ViewerCertificate": {
+               "AcmCertificateArn" : {"Fn::ImportValue":"CertificateARN"},
+               "SslSupportMethod": "sni-only"
+             },
+             "DefaultCacheBehavior" : {
+                 "TargetOriginId" : "FailoverBucket",
+                 "ForwardedValues" : {
+                     "QueryString" : "true",
+                     "Cookies" : { "Forward" : "all" }
+                 },
+                 "ViewerProtocolPolicy" : "redirect-to-https"
+             },
+             "Enabled" : "true",
+             "Origins" : [ {
+                 "DomainName" : {"Fn::Join": ["",[{"Fn::ImportValue": "FailoverBucket"},".s3.amazonaws.com"]]},
+                 "Id" : "FailoverBucket",
+                 "S3OriginConfig" : {}
+             }],
+            "DefaultRootObject": "index.html"
+          }
+       }
+    },
+
+    "HealthCheck": {
+      "Type": "AWS::Route53::HealthCheck",
+      "Properties": {
+        "HealthCheckConfig": {
+          "Type": "HTTP",
+          "ResourcePath": {"Ref": "HealthCheckPath"},
+          "FullyQualifiedDomainName": {"Fn::Join": ["",["www.",{"Fn::ImportValue": "DomainName"}]]},
+          "RequestInterval": "30",
+          "FailureThreshold": "3"
+        }
+      }
+    },
+    "HealthCheckAlertTopic": {
+      "DependsOn":[],
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "Subscription": [
+          {
+            "Endpoint": {
+              "Fn::ImportValue": "NotificationEmail"
+            },
+            "Protocol": "email"
+          },
+          {
+            "Endpoint": {
+              "Fn::ImportValue": "NotificationCellPhone"
+            },
+            "Protocol": "sms"
+          }
+        ],
+        "DisplayName": {
+          "Fn::Join": [
+            "",
+            [
+              "Alert-Application-",
+              {
+                "Fn::ImportValue": "DomainName"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "CloudWatchAlert": {
+      "DependsOn": ["HealthCheckAlertTopic","HealthCheck"],
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmName" :"Application Health Check",
+        "ActionsEnabled": true,
+        "AlarmActions": [{"Ref": "HealthCheckAlertTopic"}],
+        "AlarmDescription": "The application stack is failing its health check ",
+        "ComparisonOperator": "LessThanThreshold",
+        "EvaluationPeriods": 1,
+        "InsufficientDataActions": [{"Ref": "HealthCheckAlertTopic"}],
+        "MetricName": "HealthCheckStatus",
+        "Namespace": "AWS/Route53",
+        "Dimensions": [{
+          "Name": "HealthCheckId",
+          "Value" : {"Ref":"HealthCheck"}
+        }],
+        "OKActions": [{"Ref": "HealthCheckAlertTopic"}],
+        "Period": 60,
+        "Statistic": "Minimum",
+        "Threshold": "1",
+        "Unit": "None"
+      }
+    }
+  },
+  "Outputs" : {
+    "CloudFrontDistribution" : {
+      "Description" : "The non-public CF host name",
+      "Value" : {"Fn::GetAtt": ["ApiGatewayDomainName", "DistributionDomainName"]}
+    }
+  }
+}

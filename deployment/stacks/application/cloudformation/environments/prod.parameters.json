@@ -1,0 +1,26 @@
+[
+  {
+    "ParameterKey": "SystemName",
+    "ParameterValue": "app-stack"
+  },
+  {
+    "ParameterKey": "ChangeId",
+    "ParameterValue": "xxxxxxxxxxxxxxxxxx"
+  },
+  {
+    "ParameterKey": "NodeJsRuntime",
+    "ParameterValue": "nodejs6.10"
+  },
+  {
+    "ParameterKey": "StageName",
+    "ParameterValue": "discussionfairy"
+  },
+  {
+    "ParameterKey": "HealthCheckPath",
+    "ParameterValue": "/"
+  },
+  {
+    "ParameterKey": "LambdaSubnetId",
+    "ParameterValue": "subnet-730b667f"
+  }
+]

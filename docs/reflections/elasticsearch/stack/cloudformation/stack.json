@@ -1,0 +1,273 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Template for an Elasticsearch cluster and the needed cloudwatch alarms.",
+  "Parameters": {
+    "Domain": {
+      "Description": "ElasticSearch domain name / Not the same as a DNS domain name",
+      "Type": "String"
+    },
+    "IsDedicatedMasterEnabled": {
+      "Type": "String"
+    },
+    "InstanceType": {
+      "Description": "The type of Instance",
+      "Type": "String"
+    },
+    "NumberOfInstances": {
+      "Type": "String"
+    },
+    "EBSVolumeSize":{
+      "Type":"String"
+    },
+    "JVMAllowedUtilization": {
+      "Type": "String"
+    },
+    "CPUAllowedUtilization": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "ElasticsearchDomain": {
+      "Type": "AWS::Elasticsearch::Domain",
+      "Properties": {
+        "AccessPolicies": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": {"Fn::Join": ["",["arn:aws:iam::",{"Ref":"AWS::AccountId"},":user/",{"Fn::ImportValue" : "AdminUser"}]]}
+            },
+            "Action": "es:*",
+            "Resource": {"Fn::Join": ["",["arn:aws:es:",{"Ref":"AWS::Region"},":",{"Ref":"AWS::AccountId"},":domain/",{"Ref":"Domain"},"/*"]]}
+          }]
+        },
+        "DomainName": {"Ref":"Domain"},
+        "ElasticsearchClusterConfig": {
+          "DedicatedMasterEnabled": {"Ref":"IsDedicatedMasterEnabled"},
+          "InstanceCount": {"Ref":"NumberOfInstances"},
+          "ZoneAwarenessEnabled": "false",
+          "InstanceType": {"Ref":"InstanceType"}
+        },
+        "EBSOptions": {
+          "EBSEnabled": true,
+          "VolumeSize": {"Ref":"EBSVolumeSize"},
+          "VolumeType": "gp2"
+        },
+        "SnapshotOptions": {
+          "AutomatedSnapshotStartHour": "0"
+        }
+      }
+    },
+    "LambdaESIAMPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "lambda-es-access",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["es:*"],
+              "Effect": "Allow",
+              "Resource": {"Fn::Join": ["",[{"Fn::GetAtt": ["ElasticsearchDomain", "DomainArn"]},"/*"]]}
+            }
+          ]
+        },
+        "Roles": [ "lambda-execution-role"]
+      }
+    },
+
+    "AlertSNSTopic": {
+      "DependsOn":[],
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "Subscription": [
+          {
+            "Endpoint": {"Fn::ImportValue" : "NotificationEmail"},
+            "Protocol": "email"
+          },
+          {
+            "Endpoint": {"Fn::ImportValue" : "NotificationCellPhone"},
+            "Protocol": "sms"
+          }
+        ],
+        "DisplayName": {
+          "Fn::Join": [
+            "",
+            [
+              "Alert--",
+              {
+                "Ref": "Domain"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "CloudWatchHealthyHostCount": {
+      "DependsOn": ["AlertSNSTopic"],
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "AlertSNSTopic"
+          }
+        ],
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "Alert - The number of healthy ElasticSearch nodes is less than ",
+              {
+                "Ref": "NumberOfInstances"
+              }
+            ]
+          ]
+        },
+        "ComparisonOperator": "LessThanThreshold",
+        "EvaluationPeriods": 5,
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlertSNSTopic"
+          }
+        ],
+        "MetricName": "KibanaHealthyNodes",
+        "Namespace": "AWS/ES",
+        "OKActions": [
+          {
+            "Ref": "AlertSNSTopic"
+          }
+        ],
+        "Period": 60,
+        "Statistic": "Minimum",
+        "Threshold": {"Ref": "NumberOfInstances"},
+        "Unit": "Count"
+      }
+    },
+    "CloudWatchJVMMemoryPressue": {
+      "DependsOn": ["AlertSNSTopic"],
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "AlertSNSTopic"
+          }
+        ],
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "Alert - The JVM Pressure has exceeded ",
+              {
+                "Ref": "JVMAllowedUtilization"
+              }," percent utilization."
+            ]
+          ]
+        },
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 5,
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlertSNSTopic"
+          }
+        ],
+        "MetricName": "JVMMemoryPressure",
+        "Namespace": "AWS/ES",
+        "OKActions": [
+          {
+            "Ref": "AlertSNSTopic"
+          }
+        ],
+        "Period": 60,
+        "Statistic": "Maximum",
+        "Threshold": {
+          "Ref": "JVMAllowedUtilization"
+        },
+        "Unit": "Percent"
+      }
+    },
+    "CloudWatchCPUUtilization": {
+      "DependsOn": ["AlertSNSTopic"],
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "AlertSNSTopic"
+          }
+        ],
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "Alert - The CPU utilization has exceeded ",
+              {
+                "Ref": "CPUAllowedUtilization"
+              }," percent."
+            ]
+          ]
+        },
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 5,
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlertSNSTopic"
+          }
+        ],
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/ES",
+        "OKActions": [
+          {
+            "Ref": "AlertSNSTopic"
+          }
+        ],
+        "Period": 60,
+        "Statistic": "Maximum",
+        "Threshold": {
+          "Ref": "CPUAllowedUtilization"
+        },
+        "Unit": "Percent"
+      }
+    },
+    "CloudWatchClusterWritesBlocked": {
+      "DependsOn": ["AlertSNSTopic"],
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ActionsEnabled": true,
+        "AlarmActions": [
+          {
+            "Ref": "AlertSNSTopic"
+          }
+        ],
+        "AlarmDescription": "ElasticSearch Cluster writes blocked!",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 5,
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlertSNSTopic"
+          }
+        ],
+        "MetricName": "ClusterIndexWritesBlocked",
+        "Namespace": "AWS/ES",
+        "OKActions": [
+          {
+            "Ref": "AlertSNSTopic"
+          }
+        ],
+        "Period": 60,
+        "Statistic": "Maximum",
+        "Threshold": "0",
+        "Unit": "None"
+      }
+    }
+  },
+  "Outputs": {
+    "ESEndPointURL": {
+      "Description": "ES Domain endpoint ",
+      "Value": {"Fn::Join": ["",["https://",{"Fn::GetAtt": ["ElasticsearchDomain", "DomainEndpoint"]}]]},
+      "Export":{
+        "Name":"ESEndPointURL"
+      }
+    }
+  }
+}

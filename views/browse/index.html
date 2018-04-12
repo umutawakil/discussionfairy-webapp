@@ -1,0 +1,81 @@
+  {% extends "layouts/main.html" %}
+
+  {% block title %}
+      <title>Share your opinion using audio recordings.</title>
+  {% endblock %}
+
+  {% block body %}
+      <span id="home" style="display: none;"></span>
+      <div style="display: none;"> <audio id="markerAudio" controls><source src=""></audio></div>
+    <div id="browseContainer" class="container">
+          {% if results.length %}
+
+          <div class="pageTitle">
+            <H1>Discussions</H1>
+            <!--Browse discusssions most relevant to your location and language.-->
+            <p> Browse discusssions most relevant to your location and language.</p>
+          </div>
+          <HR/>
+          <!--Filter options -->
+          <!--<div id="browse-dis-form-container">
+              <div class="browse-dis-form-element">
+                <select id="locationMenu" name="location" class="form-control">
+                  {% if not results.location %}
+                    <option value='blank'>Audience Location</option>
+                  {% endif %}
+                  {% for l in results.locations %}
+                      <option value='{{l}}' {{"selected" if l == results.location else ""}}>{{l}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="browse-dis-form-element">
+                <select id="languageMenu" name="language" class="form-control">
+                  {% if not results.language %}
+                    <option value='blank'>Audience Language</option>
+                  {% endif %}
+                  {% for l in results.languages %}
+                    <option value='{{l}}' {{"selected" if l == results.language else ""}}>{{l}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+          </div>-->
+          <div class="discussionsContainer">
+              <div id="results" class="browseDiscussionsTab">
+                <div class="discussionList">
+                  {% for d in results %}
+                    {% include "../browse/partials/discussion-list.html" %}
+                  {% endfor %}
+                </div>
+              </div>
+          </div>
+          {% endif %}
+          {% if results.length === 0 and (not results.pages.nextPage) %}
+          <div class="page-header">
+            <h1>No results</h1>
+          </div>
+            <p>No discussions exist for that filter criteria.</p>
+            <p>Try another language and location combination.</p>
+            <div style="margin-bottom: 25px;"></div>
+          {% endif %}
+          {% if results.length === 0 and results.pages.currentPage !== 0 %}
+          <div class="page-header">
+            <h1>No More Results</h1>
+          </div>
+            <p>No more search results</p>
+            <div style="margin-bottom: 25px;"></div>
+          {% endif %}
+
+          <!--Page Number Buttons-->
+          <!-- btn btn-primary btn-lg active pageButtons-->
+          <div class="pageNumberContainer">
+              {% if results.pages.hasOwnProperty('previousPage') %}
+              <div class="pageButtonUnit"><a href="/?p={{results.pages.previousPage}}" class="btn btn-primary btn-lg active pageButtons" role="button"> < Back </a></div>
+              {% endif %}
+
+              {% if results.pages.hasOwnProperty('nextPage') and results.pages.nextPage !== 0 %}
+              <div class="pageButtonUnit"><a href="/?p={{results.pages.nextPage}}" class="btn btn-primary btn-lg active pageButtons" role="button"> Next > </a></div>
+              {% endif %}
+          </div>
+      </div>
+  {% endblock %}

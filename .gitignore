@@ -1,0 +1,10 @@
+local-secrets.json
+
+*.DS_Store
+.DS_Store
+
+*.p8
+apns.p8
+
+apns-public-cert.pem
+apns-private-key.pem

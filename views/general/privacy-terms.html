@@ -1,0 +1,22 @@
+{% if not isMobile %}
+  {% extends "layouts/main.html" %}
+{% endif %}
+
+{% if isMobile %}
+  {% extends "layouts/mobile-layout.html" %}
+{% endif %}
+
+{% block title %}
+    <title>Contact</title>
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+      <H1>Privacy</H1><BR/>
+      <p>DiscussionFairy stores no identity information about users. All users are anonymous.</p>
+      <H1>Terms</H1>
+      <p>Any recording that contains evidence of the law being broken will be given to law enforcement in the corresponding country of the recording.</p>
+      <p>Any attempt to humiliate or defame an individual through malicious recordings will result in that users phone being permanently banned from this site.
+    </div>
+{% endblock %}

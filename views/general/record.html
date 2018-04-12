@@ -1,0 +1,22 @@
+{% if not isMobile %}
+  {% extends "layouts/main.html" %}
+{% endif %}
+
+{% if isMobile %}
+  {% extends "layouts/mobile-layout.html" %}
+{% endif %}
+
+{% block title %}
+    <title>How to Record</title>
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+      <H1>How to Record</H1><BR/>
+      <p>To create a recording you must use the mobile app.</p>
+      <p>To respond to a specific discussion locate it in the mobile app using its Discussion ID.</p>
+      <p><a target="_blank" href="https://itunes.apple.com/us/app/keynote/id1351185080?mt=8">Apple/iOS Download</a></p>
+      <p><a target="_blank" href="https://play.google.com/store/apps/details?id=com.discussionfairy">Android Download</a></p>
+    </div>
+{% endblock %}

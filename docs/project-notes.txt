@@ -1,0 +1,8 @@
+
+[Testing]
+To run integration  and tests:
+  npm run integration-test
+  npm run unit-test
+
+To run all tests:
+  npm test

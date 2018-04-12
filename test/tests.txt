@@ -1,0 +1,16 @@
+//404 pages return 404 status code.
+
+//400,500, and success on Discussions,Discussion,topics,topic API and web calls
+
+//When locations is empty show all languages and when a location is selected show just languages for that location
+//may need to use some utilitySerivce methods to know whats in the db
+
+//Search functionality needs tests
+
+//Api functions need tests
+
+//Need tests that hit the variety of input possibilities on the api, this means blank location, nonblank location, etc etc
+
+
+//Various combinations of selecting/clicking on a language, location, or topic and the correct regional or non regional filters need to be
+//applied. This seems hard to test other than by brute force.

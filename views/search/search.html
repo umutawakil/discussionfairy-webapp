@@ -1,0 +1,24 @@
+{% if not isMobile %}
+  {% extends "layouts/main.html" %}
+{% endif %}
+
+{% if isMobile %}
+  {% extends "layouts/mobile-layout.html" %}
+{% endif %}
+
+{% block title %}
+    <title>How to Record</title>
+{% endblock %}
+
+{% block body %}
+    <span id="search" style="display: none;"></span>
+    <div class="container">
+      <H1>Search</H1>
+      <p>Enter the discussion ID of the discussion you are trying to join.
+      <div id="searchForm" style="width: 200px;">
+          <input class="form-control" id="discussionId" name="discussionId" placeholder="Discussion ID" size="{{maxDiscussionIdLength}}" maxlength="{{maxDiscussionIdLength}}">
+          <BR/>
+          <button id="searchButton" type="submit" class="btn btn-primary btn-lg active pageButtons" role="button">Search</button>
+      </div>
+    </div>
+{% endblock %}

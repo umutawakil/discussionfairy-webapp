@@ -1,0 +1,110 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "MasterUsername": {
+      "Type": "String"
+    },
+    "MasterUserPassword": {
+      "Type": "String"
+    },
+    "InstanceType": {
+      "Type": "String"
+    },
+    "Storage": {
+      "Type": "String"
+    },
+    "Engine": {
+      "Type": "String"
+    },
+    "EngineVersion": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "DBCluster" : {
+       "DependsOn":["VpcSecurityGroup"],
+       "Type" : "AWS::RDS::DBInstance",
+       "Properties" : {
+          "AllocatedStorage" : {"Ref":"Storage"},
+          "DBInstanceClass" : {"Ref":"InstanceType"},
+          "Engine" : {"Ref":"Engine"},
+          "EngineVersion" : {"Ref":"EngineVersion"},
+          "MasterUsername" : { "Ref" : "MasterUsername" },
+          "MasterUserPassword" : { "Ref" : "MasterUserPassword" },
+          "VPCSecurityGroups":[{"Ref":"VpcSecurityGroup"}],
+          "Port": {"Fn::ImportValue": "RDSPort"}
+       }
+    },
+    "VpcSecurityGroup" : {
+       "Type" : "AWS::EC2::SecurityGroup",
+       "Properties" : {
+          "GroupName" : "DBSecurityGroup",
+          "GroupDescription" : "Allow http to client host",
+          "VpcId" : {"Fn::ImportValue" : "VpcId"},
+          "SecurityGroupIngress" : [
+            {
+                "IpProtocol" : "tcp",
+                "CidrIp" : {"Fn::ImportValue":"CIDR"},
+                "FromPort": {"Fn::ImportValue": "RDSPort"},
+                "ToPort": {"Fn::ImportValue": "RDSPort"}
+             },
+             {
+                   "IpProtocol" : "tcp",
+                   "SourceSecurityGroupName" : "LambdaSecurityGroup",
+                   "FromPort": {"Fn::ImportValue": "RDSPort"},
+                   "ToPort": {"Fn::ImportValue": "RDSPort"}
+              }
+          ],
+          "SecurityGroupEgress" : [{
+             "IpProtocol" : "tcp",
+             "CidrIp" : "0.0.0.0/0",
+             "FromPort": "0",
+             "ToPort": "65535",
+          }]
+       }
+    },
+    "LambdaCloudformationIAMPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "lambda-cloudformation-rds-describstacks-",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["cloudformation:describeStacks"],
+              "Effect": "Allow",
+              "Resource": {"Fn::Join": ["",["arn:aws:cloudformation:",{"Ref":"AWS::Region"},":",{"Ref":"AWS::AccountId"},":stack/rds/*"]]}
+            }
+          ]
+        },
+        "Roles": [ "lambda-execution-role"]
+      }
+    },
+  },
+  "Outputs" : {
+    "DatabaseHostName" : {
+      "Description" : "Hostname for the DB",
+      "Value" : {"Fn::GetAtt": ["DBCluster", "Endpoint.Address"]},
+      "Export":{
+        "Name":"DatabaseHostName"
+      }
+    },
+    "MasterUsername": {
+      "Value": {"Ref":"MasterUsername"},
+      "Export":{
+        "Name":"MasterUsername"
+      }
+    }    ,
+    "MasterUserPassword": {
+      "Value": {"Ref":"MasterUserPassword"},
+      "Export":{
+        "Name":"MasterUserPassword"
+      }
+    },
+    "VpcSecurityGroupId": {
+      "Value": {"Ref":"VpcSecurityGroup"},
+      "Export":{
+        "Name":"VpcSecurityGroupId"
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "keyNumber":"1",
+  "xmzAlgorithm":"AWS4-HMAC-SHA256",
+  "maxImageSize":"10485760",
+
+  "JWTAlgorithm": "HS256",
+
+  "maxDiscussionIdLength": 20,
+  "maxKeywordLength": 30,
+  "maxTitleLength": 100,
+  "maxLocationLength": 50,
+  "maxLanguageLength": 30,
+  "recordingTimeSeconds": 60,
+  "maxExtensionLength" : 3,
+  "maxUserIdLength": 300,
+  "allowedExtensions":["mp3","m4a"],
+
+  "elasticSearchIndex": "discussionfairy",
+  "maxSearchResultsPerPage": 30,
+  "minIOSVersion": 1,
+  "minAndroidVersion": 2
+}
