@@ -137,7 +137,7 @@
         "HostedZoneId": {"Fn::ImportValue": "HostedZoneId"},
         "RecordSets" : [
               {
-                "Name" :{"Fn::Join": ["",["cdn.discussionfairy.com."]]},
+                "Name" :{"Fn::Join": ["",["cdn.",{"Fn::ImportValue" : "DomainName"}]]},
                 "Type" : "A",
                 "AliasTarget" : {
                     "HostedZoneId": {"Fn::ImportValue" : "CloudFrontZoneId"},
