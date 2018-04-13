@@ -62,10 +62,6 @@
       "Type": "String",
       "Description": "The APNS environment"
     },
-    "APNSApplication": {
-      "Type": "String",
-      "Description": "The apns application"
-    } ,
     "APNSApplicationARN": {
       "Type": "String",
       "Description": "The ARN of the apns application"
@@ -191,12 +187,6 @@
       "Value": {"Ref":"APNSEnvironment"},
       "Export":{
         "Name":"APNSEnvironment"
-      }
-    },
-    "APNSApplication": {
-      "Value": {"Ref":"APNSApplication"},
-      "Export":{
-        "Name":"APNSApplication"
       }
     },
     "APNSApplicationARN": {

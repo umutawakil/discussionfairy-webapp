@@ -25,7 +25,7 @@
   },
   {
     "ParameterKey": "CertificateARN",
-    "ParameterValue": "arn:aws:acm:us-east-1:298959928212:certificate/035e4c43-721d-47ab-87b2-5fac0eff8a3f"
+    "ParameterValue": "arn:aws:acm:us-east-1:842364697088:certificate/170f5b70-3489-45b0-b000-98c16649e6e1"
   },
   {
     "ParameterKey": "NotificationEmail",
@@ -56,16 +56,12 @@
     "ParameterValue": "TLSv1.2_2018"
   },
   {
-    "ParameterKey": "APNSApplication",
-    "ParameterValue": "DiscussionFairy-dev"
-  },
-  {
     "ParameterKey": "APNSApplicationARN",
-    "ParameterValue": "arn:aws:sns:us-east-1:298959928212:app/APNS_SANDBOX/DiscussionFairy-dev"
+    "ParameterValue": "arn:aws:sns:us-east-1:842364697088:app/APNS_SANDBOX/discussionfairy-stage"
   },
   {
     "ParameterKey":"GCMApplicationARN",
-    "ParameterValue": "arn:aws:sns:us-east-1:298959928212:app/GCM/DiscussionFairy-prod-gcm"
+    "ParameterValue": "arn:aws:sns:us-east-1:842364697088:app/GCM/discussionfairy-stage-gcm"
   },
   {
     "ParameterKey": "VpcId",
