@@ -12,7 +12,7 @@
       "Type": "AWS::S3::Bucket",
       "Description": "S3 Bucket for storing uploaded recordings",
       "Properties": {
-        "BucketName": {"Fn::Join": ["",["discussionfairy-recordings-",{"Fn::ImportValue" : "Environment"}]]},
+        "BucketName": {"Fn::Join": ["",["discussionfairy-recordings-",{"Fn::ImportValue" : "Environment"}]]}
       }
     },
     "RecordingSourceBucketIAMPolicy": {
@@ -52,7 +52,7 @@
        "Type" : "AWS::CloudFront::Distribution",
        "Properties" : {
           "DistributionConfig" : {
-             "Aliases" : [ {"Fn::Join": ["",["recordings."{"Fn::ImportValue" : "DomainName"}]]} ],
+             "Aliases" : [ {"Fn::Join": ["",["recordings.",{"Fn::ImportValue" : "DomainName"}]]} ],
              "ViewerCertificate": {
                 "AcmCertificateArn" : {"Fn::ImportValue" : "CertificateARN"},
                 "SslSupportMethod": "sni-only",
@@ -99,7 +99,7 @@
       "Description": "S3 Bucket for storing miscellaneous content such as js, images, etc etc",
       "Properties": {
         "AccessControl": "PublicRead",
-        "BucketName": {"Fn::Join": ["",["discussionfairy-msc-cdn-",{"Fn::ImportValue" : "Environment"}]]},
+        "BucketName": {"Fn::Join": ["",["discussionfairy-msc-cdn-",{"Fn::ImportValue" : "Environment"}]]}
       }
     },
     "MSCCloudFrontDistribution": {
