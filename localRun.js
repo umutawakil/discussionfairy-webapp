@@ -13,9 +13,6 @@ const http         = require('http')
 const localSecrets = require('./local-secrets.json')
 const logger       = require("./shared/logger.js")
 
-//This one config setting needs to be present before even the ES module is used due to run time validation in the require that initializes ES the module
-process.env.ESEndPointURL         = localSecrets.ESEndPointURL
-
 //Ensure that ~/.aws/credentials contains no [default]. You must then set the access key and secret key to the creds of a blank user
 // that has not privileges other than that they can assume the same role as the application
 process.env.AWS_ACCESS_KEY_ID     = localSecrets.AWS_ACCESS_KEY_ID
@@ -31,7 +28,7 @@ function initSystem(){
 
 function assumeApplicationRole(){
     var params = {
-    RoleArn: 'arn:aws:iam::298959928212:role/lambda-execution-role',
+    RoleArn: 'arn:aws:iam::842364697088:role/lambda-execution-role',
     RoleSessionName: 'SessionID',
     DurationSeconds: 3600
   }
