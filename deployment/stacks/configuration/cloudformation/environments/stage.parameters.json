@@ -21,7 +21,7 @@
   },
   {
     "ParameterKey": "HostedZoneId",
-    "ParameterValue": "Z2V8RNH4MX8MG6"
+    "ParameterValue": "Z36Q0UIDVSXR3V"
   },
   {
     "ParameterKey": "CertificateARN",
@@ -65,7 +65,7 @@
   },
   {
     "ParameterKey": "VpcId",
-    "ParameterValue": "vpc-44de8121"
+    "ParameterValue": "vpc-2d513a56"
   },
   {
     "ParameterKey":"CIDR",
@@ -73,7 +73,7 @@
   },
   {
     "ParameterKey":"DBSubnetId",
-    "ParameterValue":"subnet-ab3a8c80"
+    "ParameterValue":"subnet-ba8cb085"
   },
   {
     "ParameterKey":"RDSPort",
