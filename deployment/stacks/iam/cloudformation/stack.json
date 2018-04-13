@@ -45,6 +45,7 @@
       }
     },
     "LambdaCloudWatchAccessPolicy": {
+      "DependsOn":["LambdaExecutionRole"],
       "Type": "AWS::IAM::Policy",
       "Properties": {
         "PolicyName": "lambda-cloudwatch-access",
@@ -61,6 +62,7 @@
       }
     },
     "LambdaCloudformationIAMPolicy": {
+      "DependsOn":["LambdaExecutionRole"],
       "Type": "AWS::IAM::Policy",
       "Properties": {
         "PolicyName": "lambda-cloudformation-iam-describstacks-",

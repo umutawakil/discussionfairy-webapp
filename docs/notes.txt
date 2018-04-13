@@ -46,3 +46,5 @@ curl -XGET 'https://search-discussionfairy-prod-wxouwxl3atrqemx2c7w2lrrwga.us-ea
 Trending in the last hour is the most popular story in the last hour. You could say more specifically its the story thats
 catching steam or is accelerating the fastest relative to some other time frame but I think Neo4j would be best for
 queries like that and realistically it would offer little value to me if any at all.
+
+-Extra users in the IAM stack are for local testing. At run time the credentials of the lambda function are what are used to do uploading into s3.
