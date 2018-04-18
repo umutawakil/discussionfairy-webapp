@@ -6,18 +6,18 @@ const webWriterService  = require("../services/web.writer.services")
 const routeUtility      = require("../utilities/route.utilities")
 //const systemService     = require('../services/system.services')
 
-router.get('/',function(req,res){
+router.get('/',function(req,res,next){
   //systemService.coldStartCheck().then(() => {
-    handleRequest(req,res)
+    handleRequest(req,res,next)
   //})
 })
-router.get('/home',function(req,res){
+router.get('/home',function(req,res,next){
   //systemService.coldStartCheck().then(() => {
-    handleRequest(req,res)
+    handleRequest(req,res,next)
   //})
 })
 
-function handleRequest(req,res){
+function handleRequest(req,res,next){
   if(req.query.discussionId) {
     console.log("View Discussion htting home page route")
     next()

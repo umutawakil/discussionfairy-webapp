@@ -12,6 +12,7 @@ const https        = require('https')
 const http         = require('http')
 const localSecrets = require('./local-secrets.json')
 const logger       = require("./shared/logger.js")
+const settings     = require("./settings.json")
 
 //Ensure that ~/.aws/credentials contains no [default]. You must then set the access key and secret key to the creds of a blank user
 // that has not privileges other than that they can assume the same role as the application

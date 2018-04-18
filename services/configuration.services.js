@@ -8,12 +8,12 @@ const cloudformation        = container.services.Cloudformation
 const settings              = require("../settings.json")
 const logger                = require("../shared/logger.js")
 
-module.exports.setCloudformation = function(x){
+/*module.exports.setCloudformation = function(x){
   cloudformation = x
 }
 module.exports.getCloudformation = function(){
   return cloudformation
-}
+}*/
 
 module.exports.retrieveExternalConfigurations = function() {
   var stacksNames       = ["configuration", "cdn","iam","rds"]

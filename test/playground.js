@@ -1,52 +1,30 @@
 
-//Verbos
-/*var x = [[0, 1], [2, 3], [4, 5]].reduce((acc, item,index) => {
-  const flatten = acc.concat(item);
-  acc[index] = flatten;
-  console.log(acc)
-  return flatten;
-});*/
+/*for(var i=1; i <= 30; i++){
+  if(i % 3== 0 && i % 5 == 0){
+    console.log("Fizz Buzz")
 
-//console.log(x)
+  }else if(i % 3 == 0){
+    console.log("fizz")
 
-function getDividedProblem(){
-  return [1, 1, 1, 1, 1];
-}
-function invokeComputationLambda(x){
-  return Promise.resolve(x*2)
-}
+  }else if(i % 5 ==0){
+    console.log("Buzz")
 
-var results = []
-var answers = []
+  } else {
+    console.log(i)
 
-var dataPieces = getDivideProblem()
+  }
+}*/
+/*for(var i=1; i<=30; i++){
+  const fizz = i % 3 == 0 ? "fizz":""
+  const buzz = i % 5 == 0 ? "buzz":""
 
-dataPieces.forEach(x =>{
-  results.push(invokeComputationLambda(x))
-})
+  if(fizz || buzz){
+    console.log(fizz+buzz)
+  } else {
+    console.log(i)
+  }
+}*/
 
-results.forEach(x => {
-  x.then(partialAnswer => {
-    answers.push(partialAnswer)
-  })
-})
-
-Promise.all(results).then(() => {
-  var sum = answers.reduce((y,x) => {
-    return y + x
-  })
-  console.log(sum)
-})
-
-
-function getChildren(){
-    var promise = new Promise((resolve,reject)=>{
-         domakeDatabaseCall(function(){
-
-           //Handle logic processing database result
-           resolve(getChildren()) // call again when done
-         })
-    })
-
-    return promise
-}
+(function now(){
+  console.log("Execute now")
+})()
