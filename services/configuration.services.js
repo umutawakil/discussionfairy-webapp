@@ -1,7 +1,10 @@
 const utilities             = require('../shared/utilities')
-const AWS                   = require("aws-sdk")
-const CloudformationBuilder = require('aws-sdk/clients/cloudformation')
-let   cloudformation        = new CloudformationBuilder({'region': 'us-east-1'})
+//const AWS                   = require("aws-sdk")
+//const CloudformationBuilder = require('aws-sdk/clients/cloudformation')
+//let   cloudformation        = new CloudformationBuilder({'region': 'us-east-1'})
+const container             = require("../dependency_injection/container").init()
+const cloudformation        = container.services.Cloudformation
+
 const settings              = require("../settings.json")
 const logger                = require("../shared/logger.js")
 

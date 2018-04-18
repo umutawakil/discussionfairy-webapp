@@ -4,13 +4,13 @@ const signatureUtility   = require("../utilities/signature.utilities")
 const discussionDecision = require("../decisions/discussion.decisions")
 const s3Decision         = require('../decisions/s3.decisions')
 const BadUserInput       = require("../types/responses/bad.user.input")
-let   dynamoDBService    = require('../services/dynamodb.services')
-let   searchService      = require("../services/search.services")
-let   pushService        = require('../services/push.services')
-let   inboxService       = require('../services/inbox.services')
-let rdsService           = require("../services/rds.services")
+const dynamoDBService    = require('../services/dynamodb.services')
+const searchService      = require("../services/search.services")
+const pushService        = require('../services/push.services')
+const inboxService       = require('../services/inbox.services')
+const rdsService           = require("../services/rds.services")
 
-module.exports.setRDSService = function(x) {
+/*module.exports.setRDSService = function(x) {
   rdsService = x
 }
 module.exports.getRDSService = function() {
@@ -40,7 +40,7 @@ module.exports.setPushService   = function(x){
 }
 module.exports.getPushService   = function(){
   return pushService
-}
+}*/
 
 module.exports.createUploadFormParameters = function(uploadFormRequest,s3Input) {
   var verifyIsUnique = function(input){

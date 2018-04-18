@@ -1,11 +1,13 @@
 
-const utilities                   = require("../shared/utilities.js")
-const discussionUploadFormRequest = require("../types/discussion/upload.form.request.js")()
+const utilities                   = require("../shared/utilities")
+//const discussionUploadFormRequest = require("../types/discussion/example.upload.form")()
 const settings                    = require("../settings.json")
-const userDecisions               = require("../decisions/user.decisions.js")
-const BadUserInput                = require("../types/responses/bad.user.input.js")
-const UploadFormRequest           = require("../types/discussion/upload.form.request.js")
+const userDecisions               = require("../decisions/user.decisions")
+const BadUserInput                = require("../types/responses/bad.user.input")
+const UploadFormRequest           = require("../types/discussion/example.upload.form")
 const discussionUtility           = require("../utilities/discussion.utilities")
+
+//TODO: Move to Discussion Utility
 
 module.exports.parseDiscussionUploadFormRequest = function(req){
     var reject,resolve

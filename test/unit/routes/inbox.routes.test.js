@@ -1,15 +1,19 @@
+const container            = require("../../../dependency_injection/container").init()
+container.loadFakes()
+const app       = require('../../../app').app
+
 const superTest     = require('supertest')
 const expect        = require('chai').expect
 const assert        = require('chai').assert
-const sinon         = require("sinon")
+/*const sinon         = require("sinon")
 const testTools     = require("../../../utilities/test.utilities")
 
 const inboxService  = require("../../../services/inbox.services")
 const systemService = require("../../../services/system.services")
-const pushService   = require('../../../services/push.services')
+const pushService   = require('../../../services/push.services')*/
 
 describe("Inbox Routes: ",function(){
-  var sandbox     //= sinon.createSandbox()
+  /*var sandbox     //= sinon.createSandbox()
   var inboxStub
   var countStub
   var deleteStub
@@ -43,7 +47,7 @@ describe("Inbox Routes: ",function(){
   })
   afterEach(() => {
     sandbox.restore()
-  })
+  })*/
   it("gets the inbox count",function(done){
       superTest(app).get("/d/inbox/count")
       .set("authentication","Bearer sfsfsfsfsfsfsfsfsfs")

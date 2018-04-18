@@ -1,7 +1,10 @@
+const container          = require("../../../dependency_injection/container").init()
+container.loadFakes()
+
 const userService     = require("../../../services/user.services")
-const sinon           = require("sinon")
+//const sinon           = require("sinon")
 const assert          = require("chai").assert
-const dynamoDBService = require("../../../services/dynamodb.services")
+//const dynamoDBService = require("../../../services/dynamodb.services")
 
 var req = {
   headers: {
@@ -16,7 +19,7 @@ var req = {
 
 describe("User Service:",function(){
 
-  var dynamoDBServiceStub;
+  /*var dynamoDBServiceStub;
   beforeEach(function(){
     dynamoDBServiceStub = sinon.stub(dynamoDBService,"simpleObjectSave");
     dynamoDBServiceStub.callsFake(()=>{
@@ -25,7 +28,7 @@ describe("User Service:",function(){
   })
   afterEach(function(){
     dynamoDBServiceStub.restore()
-  })
+  })*/
 
   it("create a mobile passive user ",function(done){
     userService.createMobilePassiveUser(req).then(r=>{

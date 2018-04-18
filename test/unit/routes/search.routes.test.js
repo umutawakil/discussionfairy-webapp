@@ -1,14 +1,18 @@
+const container            = require("../../../dependency_injection/container").init()
+container.loadFakes()
+const app       = require('../../../app').app
+
 const superTest     = require('supertest')
 const expect        = require('chai').expect
 const assert        = require('chai').assert
-const sinon         = require("sinon")
+/*const sinon         = require("sinon")
 const testTools     = require("../../../utilities/test.utilities")
 
 const searchService = require("../../../services/search.services")
-const systemService = require("../../../services/system.services")
+const systemService = require("../../../services/system.services")*/
 
 describe("Search Routes: ",function(){
-  var sandbox     = sinon.createSandbox()
+  /*var sandbox     = sinon.createSandbox()
   var searchStub
   var systemStub
   var app
@@ -22,7 +26,7 @@ describe("Search Routes: ",function(){
   })
   afterEach(() => {
     sandbox.restore()
-  })
+  })*/
 
   it("Can load search page",function(done){
       superTest(app).get("/d/search")

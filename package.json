@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node localRun.js",
-    "test": "node ./node_modules/mocha/bin/mocha test/**/*.js",
-    "unit-test": "node ./node_modules/mocha/bin/mocha test/unit/**/*.js",
-    "integration-test": "node ./node_modules/mocha/bin/mocha test/integration/**/*.js"
+    "test": "node ./node_modules/mocha/bin/mocha NODE_ENV=test test/**/*.js",
+    "unit-test": "NODE_ENV=test mocha test/unit/**/*.js",
+    "integration-test": "node ./node_modules/mocha/bin/mocha NODE_ENV=test test/integration/**/*.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
     "aws-sdk": "^2.138.0",
     "aws-serverless-express": "^3.0.2",
     "body-parser": "^1.18.2",
+    "bottlejs": "^1.7.0",
     "chai": "^4.1.2",
     "crypto-js": "^3.1.9-1",
     "dompurify": "^1.0.2",

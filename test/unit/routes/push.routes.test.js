@@ -1,14 +1,18 @@
+const container            = require("../../../dependency_injection/container").init()
+container.loadFakes()
+const app       = require('../../../app').app
+
 const superTest     = require('supertest')
 const expect        = require('chai').expect
 const assert        = require('chai').assert
-const sinon         = require("sinon")
+/*const sinon         = require("sinon")
 const testTools     = require("../../../utilities/test.utilities")
 
 const pushService   = require("../../../services/push.services")
-const systemService = require("../../../services/system.services")
+const systemService = require("../../../services/system.services")*/
 
 describe("Push(SNS) Routes: ",function(){
-  var sandbox     = sinon.createSandbox()
+  /*var sandbox     = sinon.createSandbox()
   var pushStub
   var systemStub
   var app
@@ -22,7 +26,7 @@ describe("Push(SNS) Routes: ",function(){
   })
   afterEach(() => {
     sandbox.restore()
-  })
+  })*/
 
   it("can handle a request to register user for APNS",function(done){
       superTest(app).post("/d/push/apns/register")

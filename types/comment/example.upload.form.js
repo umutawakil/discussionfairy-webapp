@@ -5,15 +5,15 @@ var settings      = require("../../settings.json")
 var utilities     = require("../../shared/utilities")
 //module.exports = CommentUploadRequest
 
-var CommentUploadRequest = function(){
+var ExampleCommentUploadRequest = function(){
   BaseType.apply(this,arguments)
   this.fields = ["userId","discussionId","extension"]
 }
 
-CommentUploadRequest.prototype = new BaseType()
-CommentUploadRequest.prototype.constructor = CommentUploadRequest
+ExampleCommentUploadRequest.prototype = new BaseType()
+ExampleCommentUploadRequest.prototype.constructor = ExampleCommentUploadRequest
 
-CommentUploadRequest.prototype.validate = function(){
+ExampleCommentUploadRequest.prototype.validate = function(){
   var result = BaseType.prototype.validate.apply(this,arguments)
   if(!result.valid){
     return result
@@ -62,4 +62,4 @@ function isDiscussionIdValid(x) {
   return utilities.isURLSafe(x)
 }
 
-module.exports = CommentUploadRequest
+module.exports = ExampleCommentUploadRequest

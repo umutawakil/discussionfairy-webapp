@@ -4,8 +4,10 @@ const settings             = require("../settings.json")
 const userDecisions        = require("../decisions/user.decisions")
 //const BadUserInput         = require("../types/responses/bad.user.input")
 const BadRequest           = require("../types/responses/bad.request")
-const CommentUploadRequest = require("../types/comment/upload.form.comment.request")
+const CommentUploadRequest = require("../types/comment/example.upload.form")
 const discussionUtility    = require("../utilities/discussion.utilities")
+
+//TODO: Move to Comment Utility
 
 module.exports.parseCommentUploadFormRequest = function(req){
     var reject,resolve

@@ -2,15 +2,19 @@
 const utilities        = require('../shared/utilities')
 //const jwt              = require('jsonwebtoken')
 //const settings         = require('../settings.json')
-const dynamoDBService  = require('../services/dynamodb.services')
+//const dynamoDBService  = require('../services/dynamodb.services')
 //const security         = require("../services/security.services")
+
+function lazyLoadDynamoDBService() {
+  return require('../services/dynamodb.services')
+}
 
 module.exports.createMobilePassiveUser = function(req) {
 
     var user = createUserDataObject(req)
     //var params = createDBRequestParameters(user)
 
-    return dynamoDBService.simpleObjectSave(user,"user").then(()=>{
+    return lazyLoadDynamoDBService().simpleObjectSave(user,"user").then(()=>{
       return createUserToken(user)
     })
 

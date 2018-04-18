@@ -1,4 +1,4 @@
-const CommentUploadRequest = require("../../../types/comment/upload.form.comment.request")
+const CommentUploadRequest = require("../../../types/comment/example.upload.form")
 const expect               = require('chai').expect
 const assert               = require('chai').assert
 

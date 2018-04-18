@@ -1,6 +1,8 @@
 const utilities    = require('../shared/utilities')
 const BadUserInput = require("../types/responses/bad.user.input.js")
 
+//TODO: Move to discussionUtility
+
 module.exports.returnObectIfTrue = function(result,failureObject){
   return result.then(r=>{
     if(r){
@@ -58,7 +60,7 @@ module.exports.convertDiscussionToStorageSets = function(d){
 //Web/SEO/ META display
 
 module.exports.createKeywordsStringWithAnd = function(d){
-    if(!d){
+    if(!d || !d.keywords){
       return d
     }
     var temp=""
@@ -72,7 +74,7 @@ module.exports.createKeywordsStringWithAnd = function(d){
     return temp
 }
 module.exports.createKeywordsStringWithoutAnd = function(d){
-    if(!d){
+    if(!d || !d.keywords){
       return d
     }
     var temp=""
@@ -85,14 +87,14 @@ module.exports.createKeywordsStringWithoutAnd = function(d){
     return temp
 }
 module.exports.createDate = function(d) {
-  if(!d){
+  if(!d || !d.updateTime){
     return d
   }
   var date = new Date(d.updateTime);
   return date.toString();
 }
 module.exports.createLastMod = function(d) {
-  if(!d){
+  if(!d || !d.updateTime){
     return d
   }
   var date = new Date(d.updateTime);

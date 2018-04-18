@@ -28,27 +28,6 @@ module.exports.gcmRegister = function(userId,deviceToken) {
   })
 }
 
-/*module.exports.createTopic = function(discussionId){
-  const types = ["apns","gcm"]
-  var configs = types.map(t=>{
-    return {type:t,name:discussionId+"_"+t}
-  })
-
-  console.log(JSON.stringify(configs))
-
-  var results = configs.map(c =>{
-    return snsService.createTopic(new SNSCreateTopicRequest(c.name)).then(t=>{
-      var topicInfo = {
-        discussionId: discussionId,
-        topicARN: t.TopicArn,
-        type: c.type
-      }
-      return dynamoDBService.simpleObjectSave(topicInfo,"sns_topics")
-    })
-  })
-
-  return Promise.all(results)
-}*/
 module.exports.createTopic = function(discussionId){
     return snsService.createTopic(new SNSCreateTopicRequest(discussionId)).then(t=>{
       var topicInfo = {
@@ -59,7 +38,6 @@ module.exports.createTopic = function(discussionId){
     })
 }
 
-//TODO: Expression
 module.exports.subscribeToDiscussion = function(userId,discussionId) {
   return pushUtility.getPushRegistration(userId).then(r=>{
     if(!r){
@@ -81,29 +59,6 @@ module.exports.subscribeToDiscussion = function(userId,discussionId) {
   })
 }
 
-/*module.exports.subscribeToDiscussion = function(userId,discussionId) {
-  return pushUtility.getPushRegistration(userId).then(r=>{
-    if(!r){
-      return
-    }
-    var key = {
-      discussionId:discussionId,
-      type:r.type
-    }
-    return dynamoDBService.simpleObjectGet(key,"sns_topics").then(t =>{
-        return snsService.subscribe(t.topicARN,r.endpointARN).then(s =>{
-            var data = {
-              userId: userId,
-              subscriptionARN: s.SubscriptionArn,
-              topicARN:t.topicARN
-            }
-            return dynamoDBService.simpleObjectSave(data,"sns_subscriptions")
-        })
-    })
-  })
-}*/
-
-//TODO: Needs unit test
 module.exports.unsubscribe = function(userId,discussionId) {
   return pushUtility.getPushRegistration(userId).then(r=>{
     if(!r){
@@ -139,7 +94,7 @@ module.exports.sendNewCommentNotifications = function(userId,discussionId) {
 //then subscribe them. If the user has no registration then just publish the message.
 function sendNotification(userId,discussionId,msg,registration) {
   return pushUtility.getTopic(discussionId).then(topic=>{
-    console.log("Attempting to publish")
+    console.log("Attempting to publish: "+topic)
     return registration.then(r=>{
       if(r){
         return pushUtility.unsubscribe(userId,topic).then(()=>{

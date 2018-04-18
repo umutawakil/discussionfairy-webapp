@@ -1,15 +1,22 @@
+const container            = require("../../../dependency_injection/container").init()
+container.loadFakes()
+
 const superTest            = require('supertest')
 const expect               = require('chai').expect
 const assert               = require('chai').assert
-const sinon                = require("sinon")
+const app                  = require('../../../app').app
+/*const sinon                = require("sinon")
 
 const discussionService    = require("../../../services/discussion.services")
 const discussionWebAdapter = require("../../../adapters/discussion.web.adapters")
 const systemService        = require("../../../services/system.services")
-const testTools            = require("../../../utilities/test.utilities")
+const testTools            = require("../../../utilities/test.utilities")*/
+
+//TODO: Services need to validate their inputs for this to have more coverage
+//TODO: A clean way of testing authentication flows is needed.
 
 describe("Discusion Routes:",function(){
-  var sandbox = sinon.createSandbox();
+  /*var sandbox = sinon.createSandbox();
   var webAdapterStub
   var discussionFormParametersStub
   var discussionCreateStub
@@ -42,11 +49,13 @@ describe("Discusion Routes:",function(){
   })
   afterEach(() => {
     sandbox.restore()
-  })
+  })*/
 
   it("can handle a request to creates a new discussion", function(done) {
       superTest(app).get("/d/discussion/create?info=xxxxx&signature=xxxxxx")
-      .expect(200).then(response => {
+      .then(response => {
+        assert(response.status, "No status code")
+        assert(response.status != 404, "Missing page")
         assert(response.text,"Invalid response: "+response.text)
         done()
 
@@ -59,7 +68,9 @@ describe("Discusion Routes:",function(){
       superTest(app).post("/d/discussion/create-new-discussion-upload-form-parameters")
       .set("content-type","application/x-www-form-urlencoded")
       .set("authentication","Bearer sfsfsfsfsfsfsfsfsfs")
-      .expect(200).then(response => {
+      .then(response => {
+        assert(response.status != 404, "missing page")
+        assert(response.status, "No status code")
         assert(response.text,"Invalid response: "+response.text)
         done()
 
@@ -72,7 +83,7 @@ describe("Discusion Routes:",function(){
   it("can handle a uniquiqeness check request", function(done) {
       superTest(app).get("/d/discussion/is-unique")
       .set("authentication","Bearer sfsfsfsfsfsfsfsfsfs")
-      .query("discussionId="+discussionId)
+      .query("discussionId=sfsfsfs")
       .expect(200).then (response=>{
         assert(response.text,"Invalid response: "+response.text)
         done()
@@ -82,6 +93,20 @@ describe("Discusion Routes:",function(){
         done(e)
       })
   })
+
+  //TODO: Needed
+  /*it("can reject an unauthenticated request", function(done) {
+      superTest(app).get("/d/discussion/is-unique")
+      .query("discussionId=sfsfsfs")
+      .expect(401).then (response=>{
+        assert(response.text,"Invalid response: "+response.text)
+        done()
+
+      }).catch(e => {
+        console.log(e)
+        done(e)
+      })
+  })*/
 
   /*it("can handle a discussion retrieval request", function(done) {
       superTest(app).get("/d/discussion/get?discussionId=sfsfsfsf")

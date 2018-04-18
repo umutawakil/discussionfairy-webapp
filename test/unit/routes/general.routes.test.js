@@ -1,15 +1,19 @@
+const container            = require("../../../dependency_injection/container").init()
+container.loadFakes()
+
+const app                          = require('../../../app').app
 const superTest = require('supertest')
 const expect    = require('chai').expect
-const sinon     = require("sinon")
+//const sinon     = require("sinon")
 
-const systemService        = require("../../../services/system.services")
-const testTools            = require("../../../utilities/test.utilities")
+//const systemService        = require("../../../services/system.services")
+//const testTools            = require("../../../utilities/test.utilities")
 
 //process.env.PublicCDNURL = "XXXXXXX"
 //process.env.RecordingSourceURL = "XXXXXXXXXX"
 
 describe("General Routes: ",function(){
-  var sandbox = sinon.createSandbox();
+  /*var sandbox = sinon.createSandbox();
   var systemStub
   var app
 
@@ -20,7 +24,7 @@ describe("General Routes: ",function(){
   })
   afterEach(() => {
     sandbox.restore()
-  })
+  })*/
 
   it("Recording Page",function(done){
       superTest(app).get("/df/record")

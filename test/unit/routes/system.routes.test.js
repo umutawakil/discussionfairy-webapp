@@ -1,12 +1,16 @@
+const container            = require("../../../dependency_injection/container").init()
+container.loadFakes()
+const app       = require('../../../app').app
+
 const superTest     = require('supertest')
 const expect        = require('chai').expect
 const assert        = require('chai').assert
-const sinon         = require("sinon")
+/*const sinon         = require("sinon")
 const testTools     = require("../../../utilities/test.utilities")
-const systemService = require("../../../services/system.services")
+const systemService = require("../../../services/system.services")*/
 
 describe("System Routes: ",function(){
-  var sandbox        = sinon.createSandbox()
+  /*var sandbox        = sinon.createSandbox()
   var systemInitStub
   var infoStub
   //var coldStub
@@ -23,7 +27,7 @@ describe("System Routes: ",function(){
   })
   afterEach(() => {
     sandbox.restore()
-  })
+  })*/
   it("retrieves general info",function(done){
       superTest(app).get("/d/system/general-info")
       .expect(200).then( response =>{

@@ -1,8 +1,9 @@
 
+//const container               = require("../dependency_injection/container").init()
 const express                 = require('express')
 const router                  = express.Router()
 const discussionService       = require('../services/discussion.services.js')
-const userService             = require('../services/user.services.js')
+const userService             = require('../services/user.services.js')//container.services.UserService//require('../services/user.services.js')
 const ResponseData            = require("../shared/response-data.js")
 const discussionWebAdapter    = require("../adapters/discussion.web.adapters.js")
 const webWriterService        = require('../services/web.writer.services.js')

@@ -1,7 +1,7 @@
 
 //TODO: This isn't entirely valid. UserId needs to be added on the serverside
 
-function DiscussionUploadRequestForm(){
+function ExampleDiscussionUploadForm(){
   this.userId="XXXXXX",
   this.discussionId="someId",
   this.discussionTitle="This is a valid discussion Title"
@@ -11,4 +11,4 @@ function DiscussionUploadRequestForm(){
   this.extension="mp3"
 }
 
-module.exports = DiscussionUploadRequestForm
+module.exports = ExampleDiscussionUploadForm

@@ -1,8 +1,11 @@
+const container          = require("../../../dependency_injection/container").init()
+container.loadFakes()
+
 const searchService = require("../../../services/search.services.js")
 const assert        = require('chai').assert
 
 describe("Search Service:",function(){
-    var rdsService = searchService.getRDSService()
+    //var rdsService = searchService.getRDSService()
 
     it("Search for discussions",function(done){
       var criteria = {
@@ -10,13 +13,18 @@ describe("Search Service:",function(){
         language:"",
         topic:""
       }
-      var fakeResponse = {
+      /*var fakeResponse = {
         data: "random"
-      }
-      searchService.setRDSService(createMockSearch(fakeResponse))
+      }*/
+      //searchService.setRDSService(createMockSearch(fakeResponse))
       searchService.searchDiscussions(criteria).then(r=>{
-        assert(Object.is(fakeResponse,r),"Wrong response object returned")
+        assert(r, "invalid response")
+        //assert(Object.is(fakeResponse,r),"Wrong response object returned")
         done()
+
+      }).catch(e =>{
+        console.log(e)
+        done(e)
       })
     })
 
@@ -24,10 +32,10 @@ describe("Search Service:",function(){
       var data = {
         name: "random"
       }
-      var fakeResponse = [data]
-      searchService.setRDSService(createMockSearch(fakeResponse))
+      //var fakeResponse = [data]
+      //searchService.setRDSService(createMockSearch(fakeResponse))
       searchService.getDiscussion("testDiscussionId").then(r=>{
-        assert(Object.is(data,r),"Wrong response object returned")
+        //assert(Object.is(data,r),"Wrong response object returned")
         done()
 
       }).catch(e => {
@@ -42,12 +50,12 @@ describe("Search Service:",function(){
         language:"",
         topic:"War"
       }
-      var fakeResponse = {
+      /*var fakeResponse = {
         data: "random"
-      }
-      searchService.setRDSService(createMockSearch(fakeResponse))
+      }*/
+      //searchService.setRDSService(createMockSearch(fakeResponse))
       searchService.searchDiscussions(criteria).then(r=>{
-        assert(Object.is(fakeResponse,r),"Wrong response object returned")
+        //assert(Object.is(fakeResponse,r),"Wrong response object returned")
         done()
       })
     })
@@ -57,12 +65,12 @@ describe("Search Service:",function(){
         location: "",
         language:""
       }
-      var fakeResponse = {
+      /*var fakeResponse = {
         data: "random"
-      }
-      searchService.setRDSService(createMockSearch(fakeResponse))
+      }*/
+      //searchService.setRDSService(createMockSearch(fakeResponse))
       searchService.searchTopics(criteria).then(r=>{
-        assert(Object.is(fakeResponse,r),"Wrong response object returned")
+        //assert(Object.is(fakeResponse,r),"Wrong response object returned")
         done()
       })
     })
@@ -71,21 +79,19 @@ describe("Search Service:",function(){
       var criteria = {
         location: "France"
       }
-      var fakeResponse = {
+      /*var fakeResponse = {
         data: ["language1","languag2"]
-      }
-      searchService.setRDSService(createMockSearch(fakeResponse))
+      }*/
+      //searchService.setRDSService(createMockSearch(fakeResponse))
       searchService.getLanguagesInLocation(criteria).then(r=>{
-        assert(Object.is(fakeResponse,r),"Wrong response object returned")
+        //assert(Object.is(fakeResponse,r),"Wrong response object returned")
+        assert(r,"invalid response")
         done()
       })
     })
     it("Display all locations",function(done){
       searchService.getAllLocations().then(r=>{
-        var fakeResponse = {
-          data: ["France","Italy"]
-        }
-        searchService.setRDSService(createMockSearch(fakeResponse))
+        assert(r,"invalid response")
         done()
       })
     })
@@ -98,14 +104,14 @@ describe("Search Service:",function(){
         keywords:["a","b","c"],
         updateTime: new Date().getTime()
       }
-      searchService.setRDSService(createMockSearch())
+      //searchService.setRDSService(createMockSearch())
       searchService.updateWithNewDiscussion(discussion).then(()=>{
         done()
       })
     })
 
     it("Update Search Service from comment",function(done){
-      searchService.setRDSService(createMockSearch())
+      //searchService.setRDSService(createMockSearch())
       searchService.updateFromComment("discussionId").then(()=>{
         done()
       }).catch(e=>{
@@ -115,7 +121,7 @@ describe("Search Service:",function(){
     })
 
     it("propagate vote",function(done){
-      searchService.setRDSService(createMockSearch())
+      //searchService.setRDSService(createMockSearch())
       searchService.propagateVote("someUserId","discussionId").then(()=>{
         done()
       }).catch(e=>{
@@ -124,10 +130,10 @@ describe("Search Service:",function(){
       })
     })
 
-    searchService.setRDSService(rdsService)
+    //searchService.setRDSService(rdsService)
 })
 
-function createMockSearch(response){
+/*function createMockSearch(response){
   var mock = {
     preparedStatement: function(parameters){
       return Promise.resolve(response)
@@ -137,4 +143,4 @@ function createMockSearch(response){
     }
   }
   return mock
-}
+}*/

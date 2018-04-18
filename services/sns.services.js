@@ -1,17 +1,19 @@
-const SNSCreator            = require('aws-sdk/clients/sns')
-let   sns                   = new SNSCreator({'region': 'us-east-1'});
+//const SNSCreator            = require('aws-sdk/clients/sns')
+//let   sns                   = new SNSCreator({'region': 'us-east-1'});
+const container             = require("../dependency_injection/container").init()
+const sns                   = container.services.Sns
 const snsDecision           = require("../decisions/sns.decisions.js")
 const SNSCreateTopicRequest = require("../types/sns/create.topic.type")
 const ApplicationError      = require("../types/responses/application.error")
 
 //TODO: Dependency Injection Framework
-module.exports.setSNS = function(x){
+/*module.exports.setSNS = function(x){
   sns = x
 }
 
 module.exports.getSNS = function(x){
   return sns
-}
+}*/
 
 module.exports.createPlatformEndpoint = function(applicationARN,deviceToken){
   var params = {

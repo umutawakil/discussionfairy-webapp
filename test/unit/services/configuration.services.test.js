@@ -1,14 +1,17 @@
+const container             = require("../../../dependency_injection/container").init()
+container.loadFakes()
+
 const assert                = require('chai').assert
 const configurationService  = require("../../../services/configuration.services.js")
 
-var cloudformation          = configurationService.getCloudformation()
+//var cloudformation          = configurationService.getCloudformation()
 
 afterEach(function(){
-  configurationService.setCloudformation(cloudformation)
+  //configurationService.setCloudformation(cloudformation)
 })
 
 describe("Configuration Service:",function(){
-  var result = {
+  /*var result = {
     Stacks: [
       {
         Outputs:[
@@ -23,11 +26,11 @@ describe("Configuration Service:",function(){
         ]
       }
     ]
-  }
+  }*/
 
   it("retrieves external configurations",function(done){
-    var mock = createMock("describeStacks",undefined,result)
-    configurationService.setCloudformation(mock)
+    //var mock = createMock("describeStacks",undefined,result)
+    //configurationService.setCloudformation(mock)
 
     configurationService.retrieveExternalConfigurations().then(r=>{
       done()
@@ -38,10 +41,10 @@ describe("Configuration Service:",function(){
   })
 })
 
-function createMock(functionName,error,response){
+/*function createMock(functionName,error,response){
   var mock = {}
   mock[functionName] = function(params,callback){
     callback(error,response)
   }
   return mock
-}
+}*/

@@ -1,27 +1,29 @@
+const container                   = require("../../../dependency_injection/container").init()
+container.loadFakes()
+
 const commentService              = require("../../../services/comment.services.js")
-const DiscussionUploadRequestForm = require("../../../types/discussion/upload.form.request.js")
+const ExampleDiscussionUploadForm = require("../../../types/discussion/example.upload.form.js")
 const assert                      = require('chai').assert
 const signatureUtility            = require("../../../utilities/signature.utilities.js")
-//const sinon          = require("sinon")
 
-function createMock(functionName,promise){
+/*function createMock(functionName,promise){
   var mock = {}
   mock[functionName] = function(params){
     return promise
   }
   return mock
-}
+}*/
 
 describe("Comment Service:",function(){
-  var dynamoDBService = commentService.getDynamoDBService()
+  /*var dynamoDBService = commentService.getDynamoDBService()
   var inboxService    = commentService.getInboxService()
   var pushService     = commentService.getPushService()
-  var searchService   = commentService.getSearchService()
+  var searchService   = commentService.getSearchService()*/
 
   it("should create discussion upload form parameters when input is valid",function(done){
-    var mock = createMock("simpleObjectGet",Promise.resolve())
-    commentService.setDynamoDBService(mock)
-    var request = new DiscussionUploadRequestForm()
+    //var mock = createMock("simpleObjectGet",Promise.resolve())
+    //commentService.setDynamoDBService(mock)
+    var request = new ExampleDiscussionUploadForm()
     var uploadFormRequest = Promise.resolve(request)
 
     var s3Input                   = {}
@@ -50,21 +52,25 @@ describe("Comment Service:",function(){
   //TODO: Need to limit the number of posts a user makes
 
   it("retrieves comments for a given discussion",function(done){
-    var results = [
+    /*var results = [
       {name: "cat"}
-    ]
-    var mock = createMock("getComments",Promise.resolve(results))
-    commentService.setDynamoDBService(mock)
+    ]*/
+    //var mock = createMock("getComments",Promise.resolve(results))
+    //commentService.setDynamoDBService(mock)
 
-    var key = {discussionId:"sfsfs"}
-    commentService.getComments(key).then(x=>{
-      assert(x[0].name==="cat","No object returned")
+    var discussionId = "sfsfs"
+    commentService.getComments(discussionId).then(x=>{
+      //assert(x[0].name==="cat","No object returned")
       done()
+
+    }).catch(e=>{
+      console.log(e)
+      done(e)
     })
   })
 
   it("creates a new discussion from an s3 redirect",function(done){
-    var dbMock = createMock("simpleObjectSave",Promise.resolve({name:"cat"}))
+    /*var dbMock = createMock("simpleObjectSave",Promise.resolve({name:"cat"}))
     commentService.setDynamoDBService(dbMock)
 
     var searchMock = createMock("updateFromComment",Promise.resolve({}))
@@ -76,10 +82,12 @@ describe("Comment Service:",function(){
 
     var pushMock  = createMock("subscribeToDiscussion",Promise.resolve({}))
     pushMock.sendNewCommentNotifications = () => { return Promise.resolve({})}
-    commentService.setPushService(pushMock)
+    commentService.setPushService(pushMock)*/
 
     var s3VerificationSecret = "XXXXXXXXXX"
     var dataObject = {
+      userId: "xxxxxx",
+      discussionId: "xxxxxxxx",
       name: "cat",
       age: 50,
       height: 20
@@ -97,7 +105,7 @@ describe("Comment Service:",function(){
   })
 
   it("returns a rejection when inputs are invalid",function(done){
-    var dbMock = createMock("simpleObjectSave",Promise.resolve({name:"cat"}))
+    /*var dbMock = createMock("simpleObjectSave",Promise.resolve({name:"cat"}))
     commentService.setDynamoDBService(dbMock)
 
     var searchMock = createMock("updateFromDiscussion",Promise.resolve({}))
@@ -107,7 +115,7 @@ describe("Comment Service:",function(){
     commentService.setInboxService(inboxMock)
 
     var pushMock  = createMock("subscribeToDiscussion",Promise.resolve({}))
-    commentService.setPushService(pushMock)
+    commentService.setPushService(pushMock)*/
 
     var s3VerificationSecret = "XXXXXXXXXX"
     var dataObject = {
@@ -126,8 +134,8 @@ describe("Comment Service:",function(){
   })
 
   //Undo service mocking
-  commentService.setDynamoDBService(dynamoDBService)
+  /*commentService.setDynamoDBService(dynamoDBService)
   commentService.setInboxService(inboxService)
   commentService.setSearchService(searchService)
-  commentService.setPushService(pushService)
+  commentService.setPushService(pushService)*/
 })

@@ -1,5 +1,5 @@
 const crypto          = require("crypto-js")
-const keyValueService = require("../services/keyvalue.services.js")
+//const keyValueService = require("../services/keyvalue.services.js")
 
 //This uses 2 different keys. One thats tied to a role and one from a KV store.
 module.exports.getSignatureKey = function(key, dateStamp, regionName, serviceName) {

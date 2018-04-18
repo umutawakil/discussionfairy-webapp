@@ -1,13 +1,17 @@
+const container            = require("../../../dependency_injection/container").init()
+container.loadFakes()
+const app       = require('../../../app').app
+
 const superTest     = require('supertest')
 const expect        = require('chai').expect
 const assert        = require('chai').assert
-const sinon         = require("sinon")
+/*const sinon         = require("sinon")
 const testTools     = require("../../../utilities/test.utilities")
 const systemService = require("../../../services/system.services")
-const searchService = require("../../../services/search.services")
+const searchService = require("../../../services/search.services")*/
 
 describe("Topics: ",function(){
-  var sandbox        = sinon.createSandbox()
+  /*var sandbox        = sinon.createSandbox()
   var systemStub
   var topicsStub
   var app
@@ -22,7 +26,7 @@ describe("Topics: ",function(){
   })
   afterEach(() => {
     sandbox.restore()
-  })
+  })*/
   it("Can load topics homepage",function(done){
       superTest(app).get("/d/topics")
       .expect(200).then( response =>{

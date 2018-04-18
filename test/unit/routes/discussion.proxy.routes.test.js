@@ -1,12 +1,16 @@
-const superTest         = require('supertest')
-const expect            = require('chai').expect
-const assert            = require("chai").assert
-const sinon             = require("sinon")
-const testTools         = require("../../../utilities/test.utilities")
+const container          = require("../../../dependency_injection/container").init()
+container.loadFakes()
+
+const superTest     = require('supertest')
+const expect        = require('chai').expect
+const assert        = require("chai").assert
+const app           = require('../../../app').app
+
+/*const testTools         = require("../../../utilities/test.utilities")
 
 const discussionService = require("../../../services/discussion.services")
 const commentService    = require("../../../services/comment.services")
-const systemService     = require("../../../services/system.services")
+const systemService     = require("../../../services/system.services")*/
 
 var info = {
   discussionId: "sfsfsfsfsf",
@@ -18,11 +22,10 @@ var info = {
 }
 
 describe("Discussion Proxy Routes: ",function(){
-  var sandbox     = sinon.createSandbox()
+  /*var sandbox     = sinon.createSandbox()
   var commentsStub
   var discussionStub
   var systemStub
-  //var coldStartStub
   var app
 
   beforeEach(() => {
@@ -35,11 +38,13 @@ describe("Discussion Proxy Routes: ",function(){
   })
   afterEach(() => {
     sandbox.restore()
-  })
+  })*/
+
+  //Setting error codes for various conditions is handled by an isolated component
 
   it("can load a discussion page",function(done){
-      testTools.setMockReturnPromise(discussionStub,info)
-      testTools.setMockReturnEmptyPromise(commentsStub)
+      //testTools.setMockReturnPromise(discussionStub,info)
+      //testTools.setMockReturnEmptyPromise(commentsStub)
 
       superTest(app).get("/WorldPeace2017")
       .expect(200).then( response =>{
@@ -53,9 +58,9 @@ describe("Discussion Proxy Routes: ",function(){
       })
   })
 
-  it("can return 404 when a discussion does not exist",function(done){
-      testTools.setMockReturnPromise(discussionStub,undefined)
-      testTools.setMockReturnPromise(commentsStub,undefined)
+  /*it("can return 404 when a discussion does not exist",function(done){
+      //testTools.setMockReturnPromise(discussionStub,undefined)
+      //testTools.setMockReturnPromise(commentsStub,undefined)
 
       superTest(app).get("/WorldPeace2017")
       .expect(404).then( response =>{
@@ -67,5 +72,5 @@ describe("Discussion Proxy Routes: ",function(){
         console.log(e)
         done(e)
       })
-  })
+  })*/
 })

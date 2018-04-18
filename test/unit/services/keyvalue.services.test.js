@@ -1,10 +1,13 @@
+const container          = require("../../../dependency_injection/container").init()
+container.loadFakes()
+
 const kvService       = require("../../../services/keyvalue.services")
-const dynamoDBServce  = require("../../../services/dynamodb.services")
-const sinon           = require("sinon")
+//const dynamoDBServce  = require("../../../services/dynamodb.services")
+//const sinon           = require("sinon")
 const assert          = require("chai").assert
 
 describe("KV Service:",function(){
-    var getStub
+    /*var getStub
     var saveStub
 
     beforeEach(()=>{
@@ -21,7 +24,7 @@ describe("KV Service:",function(){
     afterEach(()=>{
       getStub.restore()
       saveStub.restore()
-    })
+    })*/
 
     it("retrieves a key value",function(done){
       kvService.getFromKVStore("something").then(r=>{

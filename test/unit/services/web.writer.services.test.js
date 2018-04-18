@@ -1,3 +1,6 @@
+const container          = require("../../../dependency_injection/container").init()
+container.loadFakes()
+
 const webWriterService = require("../../../services/web.writer.services.js")
 const BadUserInput     = require("../../../types/responses/bad.user.input.js")
 const assert           = require('chai').assert

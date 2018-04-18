@@ -1,23 +1,26 @@
-const AWS               = require("aws-sdk")
+/*const AWS               = require("aws-sdk")
 const DynamoDB          = require('aws-sdk/clients/dynamodb')
-let   dynamodb          = new DynamoDB({'region': 'us-east-1'})
-const utilities         = require("../shared/utilities.js")
-const dynamodbDecision  = require("../decisions/dynamodb.decisions.js")
-const ApplicationError  = require("../types/responses/application.error.js")
-const IPromise          = require("../types//responses/i.promise.js")
+let   dynamodb          = new DynamoDB({'region': 'us-east-1'})*/
+const container          = require('../dependency_injection/container').init()
+const dynamodb           = container.services.DynamoDB
+const awsDynamoDBUtility = require('aws-sdk/clients/dynamodb')
+const utilities          = require("../shared/utilities.js")
+const dynamodbDecision   = require("../decisions/dynamodb.decisions")
+const ApplicationError   = require("../types/responses/application.error")
+const IPromise           = require("../types//responses/i.promise")
 
-module.exports.setDynamoDB = function(x){
+/*module.exports.setDynamoDB = function(x){
   dynamodb = x
 }
 
 module.exports.getDynamoDB = function(){
   return dynamodb
-}
+}*/
 
 module.exports.simpleObjectSave = function(object,storageLocation) {
   console.log("SIMPLE_OBJECT_SAVE: "+JSON.stringify(object))
   var params = {
-    Item: DynamoDB.Converter.marshall(object),
+    Item: awsDynamoDBUtility.Converter.marshall(object),
     TableName: storageLocation
   }
 
@@ -34,7 +37,7 @@ module.exports.simpleObjectSave = function(object,storageLocation) {
 
 module.exports.simpleObjectGet = function(key,storageLocation){
   var params = {
-                Key: DynamoDB.Converter.marshall(key),
+                Key: awsDynamoDBUtility.Converter.marshall(key),
                 TableName: storageLocation
   }
 
@@ -47,7 +50,7 @@ module.exports.simpleObjectGet = function(key,storageLocation){
   var callback = dynamodbDecision.standardCallback(resolve,reject)
   dynamodb.getItem(params,callback)
 
-  return promise.then(item=>{
+  return promise.then(item =>{
     console.log("ITEM: "+JSON.stringify(item))
     return dynamodbDecision.formatGetItemResponse(item)
   })
@@ -55,7 +58,7 @@ module.exports.simpleObjectGet = function(key,storageLocation){
 
 module.exports.simpleObjectDelete = function(key,storageLocation){
   var params = {
-                Key: DynamoDB.Converter.marshall(key),
+                Key: awsDynamoDBUtility.Converter.marshall(key),
                 TableName: storageLocation
   }
 
